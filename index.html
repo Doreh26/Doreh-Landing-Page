@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doreh — Celebrate Everything</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --coral:  #FF5F6D; --orange: #FF8C42; --gold: #FFD166;
+      --cyan:   #06D6A0; --purple: #845EC2;
+      --ink:    #1A1A2E; --muted:  #6B6B8A; --bg: #FFF9F0;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); font-family: 'Outfit', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    #confetti-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .blobs { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.13; }
+    .blob-1 { width:520px; height:520px; background:var(--coral);  top:-150px; right:-80px; animation: drift0 8s ease-in-out infinite alternate; }
+    .blob-2 { width:380px; height:380px; background:var(--purple); bottom:0;   left:5%;    animation: drift1 9s ease-in-out infinite alternate; }
+    .blob-3 { width:280px; height:280px; background:var(--cyan);   top:35%;    right:22%;  animation: drift2 10s ease-in-out infinite alternate; }
+    .blob-4 { width:220px; height:220px; background:var(--gold);   top:18%;    left:32%;   animation: drift3 11s ease-in-out infinite alternate; }
+    @keyframes drift0 { from{transform:translate(0,0) scale(1)} to{transform:translate(24px,18px) scale(1.07)} }
+    @keyframes drift1 { from{transform:translate(0,0)} to{transform:translate(-18px,22px)} }
+    @keyframes drift2 { from{transform:translate(0,0) scale(1)} to{transform:translate(20px,-14px) scale(1.05)} }
+    @keyframes drift3 { from{transform:translate(0,0)} to{transform:translate(-12px,20px)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    .banner { position:relative; z-index:10; background:rgba(255,255,255,0.6); border-bottom:1px solid rgba(255,95,109,0.1); height:42px; overflow:hidden; display:flex; align-items:center; }
+    .banner-track { display:flex; align-items:center; gap:40px; animation:marquee 30s linear infinite; white-space:nowrap; }
+    .banner-pill { background:linear-gradient(135deg,var(--coral),var(--orange)); color:white; font-size:10px; font-weight:700; padding:2px 10px; border-radius:100px; text-transform:uppercase; letter-spacing:1px; flex-shrink:0; }
+    .banner-item { display:flex; align-items:center; gap:7px; flex-shrink:0; font-size:12.5px; color:var(--muted); }
+    .banner-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .banner-divider { width:1px; height:16px; background:rgba(0,0,0,0.12); flex-shrink:0; }
+
+    nav { position:relative; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:24px 64px; }
+    .logo { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700; letter-spacing:-0.5px; background:linear-gradient(135deg,var(--coral),var(--orange),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .nav-contact { font-size:14px; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+    .nav-contact:hover { color:var(--coral); }
+
+    .hero-wrap { position:relative; overflow:hidden; }
+    .hero { position:relative; z-index:1; min-height:calc(100vh - 110px); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:60px 24px 80px; }
+
+    .eyebrow { display:inline-flex; align-items:center; gap:10px; border:1.5px solid rgba(255,95,109,0.2); border-radius:100px; padding:8px 22px; font-size:12px; font-weight:500; color:var(--muted); margin-bottom:56px; margin-top:-40px; background:rgba(255,255,255,0.7); backdrop-filter:blur(10px); box-shadow:0 4px 20px rgba(255,95,109,0.08); animation:fadeUp 0.7s ease both; }
+    .eyebrow-dot { width:8px; height:8px; border-radius:50%; background:var(--coral); animation:pulseDot 2s ease-in-out infinite; }
+
+    h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(48px,7vw,96px); font-weight:700; line-height:0.92; letter-spacing:-2px; margin-bottom:28px; animation:fadeUp 0.7s 0.1s ease both; }
+    h1 .line-dark { display:block; color:var(--ink); }
+    h1 .line-grad { display:block; font-style:italic; background:linear-gradient(135deg,var(--coral) 0%,var(--orange) 45%,var(--gold) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    .subhead { font-size:clamp(16px,2vw,20px); color:var(--muted); font-weight:300; line-height:1.7; max-width:480px; margin:0 auto 52px; animation:fadeUp 0.7s 0.2s ease both; }
+
+    .form-wrap { animation:fadeUp 0.7s 0.3s ease both; width:100%; display:flex; justify-content:center; }
+    .form-inner { width:100%; max-width:460px; }
+    .input-row { display:flex; gap:8px; background:white; border:1.5px solid rgba(255,95,109,0.15); border-radius:100px; padding:6px 6px 6px 22px; box-shadow:0 4px 24px rgba(255,95,109,0.08); transition:border-color 0.2s,box-shadow 0.2s; }
+    .input-row:focus-within { border-color:rgba(255,95,109,0.4); box-shadow:0 4px 32px rgba(255,95,109,0.15); }
+    .input-row input { flex:1; background:transparent; border:none; outline:none; color:var(--ink); font-family:'Outfit',sans-serif; font-size:15px; padding:4px 0; }
+    .input-row input::placeholder { color:#BBBBCC; }
+    .btn-submit { flex-shrink:0; background:linear-gradient(135deg,var(--coral),var(--orange)); color:white; border:none; border-radius:100px; padding:12px 24px; font-family:'Outfit',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:transform 0.15s,box-shadow 0.15s,opacity 0.15s; white-space:nowrap; }
+    .btn-submit:hover { transform:scale(1.03); box-shadow:0 8px 24px rgba(255,95,109,0.3); }
+    .btn-submit:active { transform:scale(0.98); }
+    .form-note { font-size:11.5px; color:#BBBBCC; text-align:center; margin-top:12px; }
+
+    .success-msg { display:none; flex-direction:column; align-items:center; gap:10px; animation:fadeUp 0.5s ease both; }
+    .success-msg.show { display:flex; }
+    .success-icon { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,var(--cyan),var(--purple)); display:flex; align-items:center; justify-content:center; font-size:1.4rem; }
+    .success-msg p { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:700; color:var(--ink); }
+    .success-msg span { font-size:13px; color:var(--muted); }
+
+    .social-proof { display:flex; align-items:center; gap:10px; margin-top:36px; animation:fadeUp 0.7s 0.4s ease both; }
+    .avatars { display:flex; }
+    .avatar { width:32px; height:32px; border-radius:50%; border:2px solid var(--bg); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:white; }
+    .proof-text { font-size:13px; color:#9999AA; }
+    .proof-text strong { color:var(--ink); }
+
+    .pills { position:relative; z-index:1; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; padding:0 24px 72px; max-width:720px; margin:0 auto; animation:fadeUp 0.7s 0.5s ease both; }
+    .pill { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.7); border:1.5px solid rgba(255,95,109,0.12); border-radius:100px; padding:10px 20px; font-size:14px; color:var(--muted); backdrop-filter:blur(8px); cursor:default; transition:all 0.25s; box-shadow:0 2px 12px rgba(255,95,109,0.05); }
+    .pill:hover { border-color:rgba(255,95,109,0.35); color:var(--ink); transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,95,109,0.12); }
+
+    .countdown { position:relative; z-index:1; border-top:1px solid rgba(255,95,109,0.1); border-bottom:1px solid rgba(255,95,109,0.1); background:rgba(255,255,255,0.5); backdrop-filter:blur(12px); padding:48px 64px; display:flex; align-items:center; justify-content:center; gap:48px; flex-wrap:wrap; }
+    .count-divider { width:1px; height:50px; background:rgba(255,95,109,0.15); }
+    .count-tile { text-align:center; min-width:64px; }
+    .count-value { font-family:'Cormorant Garamond',serif; font-size:56px; font-weight:700; line-height:1; background:linear-gradient(135deg,var(--coral),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .count-label { font-size:11px; font-weight:500; color:#BBBBCC; text-transform:uppercase; letter-spacing:0.1em; margin-top:6px; }
+
+    footer { position:relative; z-index:1; border-top:1px solid rgba(0,0,0,0.06); padding:32px 64px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; background:rgba(255,255,255,0.6); }
+    .footer-links { display:flex; gap:28px; }
+    .footer-links a { font-size:13px; color:#9999AA; text-decoration:none; transition:color 0.2s; }
+    .footer-links a:hover { color:var(--coral); }
+    .footer-copy { font-size:12px; color:#BBBBCC; }
+
+    @media (max-width:600px) {
+      nav { padding:16px 20px; }
+      .countdown { padding:32px 20px; gap:24px; }
+      footer { padding:24px 20px; flex-direction:column; align-items:center; text-align:center; }
+      .input-row { flex-direction:column; border-radius:20px; padding:12px; }
+      .btn-submit { width:100%; border-radius:12px; padding:14px; text-align:center; }
+    }
+
+    /* ── LEGAL PAGES ── */
+    .legal-page { display:none; position:relative; z-index:1; max-width:760px; margin:0 auto; padding:80px 40px 120px; animation:fadeUp 0.5s ease both; }
+    .legal-page.active { display:block; }
+    .legal-back { display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); text-decoration:none; cursor:pointer; background:none; border:none; font-family:'Outfit',sans-serif; padding:0; margin-bottom:48px; transition:color 0.2s; }
+    .legal-back:hover { color:var(--coral); }
+    .legal-title { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,6vw,56px); font-weight:700; color:var(--ink); line-height:1.1; margin-bottom:12px; }
+    .legal-updated { font-size:12px; color:#BBBBCC; margin-bottom:48px; letter-spacing:0.05em; text-transform:uppercase; }
+    .legal-section { margin-bottom:40px; }
+    .legal-section h2 { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--ink); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid rgba(255,95,109,0.1); }
+    .legal-section p { font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:12px; font-weight:300; }
+    .legal-section ul { padding-left:20px; margin-bottom:12px; }
+    .legal-section ul li { font-size:15px; color:var(--muted); line-height:1.75; font-weight:300; margin-bottom:6px; }
+    .legal-trademark { display:inline-block; font-size:13px; color:rgba(107,107,138,0.6); margin-top:32px; padding:12px 20px; border:1px solid rgba(255,95,109,0.1); border-radius:12px; background:rgba(255,255,255,0.5); }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="main-content"><div class="banner"><div class="banner-track" id="banner-track"></div></div>
+
+<nav>
+  <div class="logo">doreh</div>
+  <a class="nav-contact" href="mailto:hello@doreh.com">Contact</a>
+</nav>
+
+<div class="hero-wrap">
+  <div class="blobs">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="blob blob-3"></div><div class="blob blob-4"></div>
+  </div>
+  <section class="hero">
+    
+    <h1><span class="line-dark">Celebrate</span><span class="line-grad">everything.</span></h1>
+    <p class="subhead">A new kind of platform for life's most meaningful moments.<br>Invitations, gifting, live streaming, vendor discovery all in one place.<br>Launching Summer 2026.</p>
+    <div class="form-wrap">
+      <div class="form-inner">
+        <div id="form-container">
+          <div class="input-row">
+            <input type="email" id="email-input" placeholder="your@email.com" autocomplete="email" />
+            <button class="btn-submit" onclick="handleSubmit()">Get Early Access</button>
+          </div>
+          <p class="form-note">No spam. Be the first to know when we launch.</p>
+        </div>
+        <div class="success-msg" id="success-msg">
+          <div class="success-icon">🎉</div>
+          <p>You're on the list!</p>
+          <span>We'll reach out as soon as Doreh is ready for you.</span>
+        </div>
+      </div>
+    </div>
+    <div class="social-proof">
+      <div class="avatars" id="avatars"></div>
+      <span class="proof-text">Join <strong>2,500+</strong> hosts already waiting</span>
+    </div>
+  </section>
+</div>
+
+<div class="pills">
+  <div class="pill"><span>🎉</span> AI-Powered Invitations</div>
+  <div class="pill"><span>🎁</span> Integrated Gifting</div>
+  <div class="pill"><span>📡</span> Live Streaming</div>
+  <div class="pill"><span>📱</span> QR Check-In</div>
+  <div class="pill"><span>🛍️</span> Vendor Marketplace</div>
+  <div class="pill"><span>📸</span> Memory Pages</div>
+</div>
+
+<div class="countdown">
+  <div class="count-tile"><div class="count-value" id="cd-d">--</div><div class="count-label">Days</div></div>
+  <div class="count-divider"></div>
+  <div class="count-tile"><div class="count-value" id="cd-h">--</div><div class="count-label">Hours</div></div>
+  <div class="count-divider"></div>
+  <div class="count-tile"><div class="count-value" id="cd-m">--</div><div class="count-label">Minutes</div></div>
+  <div class="count-divider"></div>
+  <div class="count-tile"><div class="count-value" id="cd-s">--</div><div class="count-label">Seconds</div></div>
+</div>
+
+<footer>
+  <div class="logo">doreh</div>
+  <div class="footer-links">
+    <a href="#" onclick="showPage('privacy');return false;">Privacy</a><a href="#" onclick="showPage('terms');return false;">Terms</a><a href="mailto:hello@doreh.com">hello@doreh.com</a>
+  </div>
+  <div class="footer-copy">© 2026 Doreh, Inc.</div>
+</footer></div>
+
+
+<!-- PRIVACY PAGE -->
+<div id="page-privacy" class="legal-page">
+  <button class="legal-back" onclick="showPage('home')">← Back to doreh.com</button>
+  <div class="legal-title">Privacy Policy</div>
+  <div class="legal-updated">Last updated: April 2026</div>
+
+  <div class="legal-section">
+    <h2>1. Who We Are</h2>
+    <p>Doreh™ is operated by Doreh, Inc. ("Doreh," "we," "us," or "our"), a company incorporated in the United States. Doreh™ is a registered trademark of Doreh, Inc. We operate the website located at doreh.com (the "Site").</p>
+    <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:hello@doreh.com" style="color:var(--coral);text-decoration:none;">hello@doreh.com</a>.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>2. Information We Collect</h2>
+    <p>When you sign up for early access on our Site, we collect the following information:</p>
+    <ul>
+      <li><strong>Email address</strong> — provided voluntarily when you submit the waitlist form.</li>
+    </ul>
+    <p>We do not currently collect payment information, location data, or any other personal information through this Site. We do not use cookies or tracking technologies beyond standard web hosting analytics.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>3. How We Use Your Information</h2>
+    <p>We use your email address solely to:</p>
+    <ul>
+      <li>Notify you when Doreh launches or becomes available in early access.</li>
+      <li>Send you occasional product updates and announcements related to Doreh.</li>
+    </ul>
+    <p>We will never sell, rent, or share your email address with third parties for their marketing purposes.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>4. Third-Party Services</h2>
+    <p>We use Formspree to process waitlist form submissions. When you submit your email, it is transmitted to and stored by Formspree in accordance with their privacy policy, available at formspree.io. We do not store your email address on our own servers at this stage.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>5. Data Retention</h2>
+    <p>We retain your email address until you request removal or until Doreh has launched and you have had the opportunity to create an account or opt out. You may request deletion of your data at any time by emailing <a href="mailto:hello@doreh.com" style="color:var(--coral);text-decoration:none;">hello@doreh.com</a>.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>6. Your Rights</h2>
+    <p>Depending on your location, you may have the right to access, correct, or delete the personal information we hold about you. Residents of California (CCPA) and the European Economic Area (GDPR) have additional rights including the right to opt out of data sales (we do not sell data), and the right to data portability. To exercise any of these rights, contact us at <a href="mailto:hello@doreh.com" style="color:var(--coral);text-decoration:none;">hello@doreh.com</a>.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>7. Children's Privacy</h2>
+    <p>This Site is not directed to children under the age of 13. We do not knowingly collect personal information from children. If you believe we have inadvertently collected information from a child, please contact us immediately.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>8. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy as our platform evolves. We will post the updated policy on this page with a revised date. Continued use of the Site after changes constitutes acceptance of the updated policy.</p>
+  </div>
+
+  <div class="legal-trademark">Doreh™ is a registered trademark of Doreh, Inc. All rights reserved.</div>
+</div>
+
+<!-- TERMS PAGE -->
+<div id="page-terms" class="legal-page">
+  <button class="legal-back" onclick="showPage('home')">← Back to doreh.com</button>
+  <div class="legal-title">Terms of Service</div>
+  <div class="legal-updated">Last updated: April 2026</div>
+
+  <div class="legal-section">
+    <h2>1. Agreement to Terms</h2>
+    <p>By accessing doreh.com (the "Site"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use the Site. These Terms apply to all visitors and users of the Site.</p>
+    <p>The Site is operated by Doreh, Inc. Doreh™ is a registered trademark of Doreh, Inc. All rights reserved.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>2. Use of the Site</h2>
+    <p>This Site is currently a pre-launch landing page. Its sole purpose is to allow interested users to submit their email address to receive updates about the Doreh platform. You agree to:</p>
+    <ul>
+      <li>Provide accurate information when submitting the waitlist form.</li>
+      <li>Not submit email addresses belonging to others without their consent.</li>
+      <li>Not attempt to disrupt, compromise, or gain unauthorized access to the Site or its infrastructure.</li>
+      <li>Not use the Site for any unlawful purpose or in violation of any applicable laws or regulations.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>3. Intellectual Property</h2>
+    <p>All content on this Site — including but not limited to the Doreh name, Doreh™ trademark, logo, design, text, and graphics — is the exclusive property of Doreh, Inc. and is protected by United States and international intellectual property laws.</p>
+    <p>Doreh™ is a registered trademark of Doreh, Inc. Unauthorized use of the Doreh name, logo, or any other proprietary marks is strictly prohibited and may result in legal action.</p>
+    <p>You may not reproduce, distribute, modify, or create derivative works of any content on this Site without express written permission from Doreh, Inc.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>4. Disclaimer of Warranties</h2>
+    <p>The Site is provided on an "as is" and "as available" basis without warranties of any kind, either express or implied. Doreh, Inc. does not warrant that the Site will be uninterrupted, error-free, or free of viruses or other harmful components. We make no warranties regarding the accuracy or completeness of any content on the Site.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>5. Limitation of Liability</h2>
+    <p>To the fullest extent permitted by applicable law, Doreh, Inc. shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of or inability to use the Site, even if we have been advised of the possibility of such damages. Our total liability to you for any claims arising from these Terms or your use of the Site shall not exceed $100.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>6. Third-Party Links</h2>
+    <p>The Site may contain links to third-party websites. These links are provided for convenience only. Doreh, Inc. has no control over and assumes no responsibility for the content, privacy policies, or practices of any third-party sites.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>7. Governing Law</h2>
+    <p>These Terms shall be governed by and construed in accordance with the laws of the State of California, without regard to its conflict of law provisions. Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the courts located in Los Angeles County, California.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>8. Changes to These Terms</h2>
+    <p>We reserve the right to modify these Terms at any time. Updated Terms will be posted on this page with a revised date. Your continued use of the Site after any changes constitutes your acceptance of the new Terms.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>9. Contact</h2>
+    <p>For questions about these Terms, please contact us at <a href="mailto:hello@doreh.com" style="color:var(--coral);text-decoration:none;">hello@doreh.com</a> or write to: Doreh, Inc., Los Angeles, California, United States.</p>
+  </div>
+
+  <div class="legal-trademark">Doreh™ is a registered trademark of Doreh, Inc. All rights reserved.</div>
+</div>
+
+<script>
+  const FORMSPREE_URL = "https://doreh.beehiiv.com/subscribe?ref=vEYGERzWBg";
+  const COLORS = ['#FF5F6D','#FF8C42','#FFD166','#06D6A0','#845EC2'];
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  const particles = Array.from({length:28},()=>({x:Math.random()*window.innerWidth,y:Math.random()*-window.innerHeight,w:Math.random()*8+4,h:Math.random()>0.5?Math.random()*8+4:Math.random()*18+6,color:COLORS[Math.floor(Math.random()*COLORS.length)],speed:Math.random()*1.2+0.5,angle:Math.random()*Math.PI*2,spin:(Math.random()-0.5)*0.06,opacity:Math.random()*0.5+0.3,isRect:Math.random()>0.5}));
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  resize(); window.addEventListener('resize',resize);
+  (function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.y+=p.speed;p.angle+=p.spin;if(p.y>canvas.height+20){p.y=-20;p.x=Math.random()*canvas.width;}ctx.save();ctx.globalAlpha=p.opacity;ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.fillStyle=p.color;if(p.isRect){ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);}else{ctx.beginPath();ctx.arc(0,0,p.w/2,0,Math.PI*2);ctx.fill();}ctx.restore();});requestAnimationFrame(draw);})();
+
+  const bannerItems=[{type:'pill',text:'Coming Soon'},{type:'text',dot:'#FF8C42',text:'VC-backed and building fast'},{type:'divider'},{type:'text',dot:'#06D6A0',text:'2,500+ hosts already on the waitlist'},{type:'divider'},{type:'text',dot:'#FFD166',text:'Expected launch',bold:'Summer 2026'},{type:'divider'}];
+  const track=document.getElementById('banner-track');
+  [...bannerItems,...bannerItems].forEach(item=>{if(item.type==='divider'){const d=document.createElement('div');d.className='banner-divider';track.appendChild(d);}else if(item.type==='pill'){const p=document.createElement('span');p.className='banner-pill';p.textContent=item.text;track.appendChild(p);}else{const wrap=document.createElement('div');wrap.className='banner-item';if(item.dot){const dot=document.createElement('div');dot.className='banner-dot';dot.style.background=item.dot;wrap.appendChild(dot);}const txt=document.createElement('span');txt.textContent=item.text+' ';if(item.bold){const b=document.createElement('strong');b.style.color='#1A1A2E';b.textContent=item.bold;txt.appendChild(b);}wrap.appendChild(txt);track.appendChild(wrap);}});
+
+  const AVATARS=[{letter:'S',gradient:'linear-gradient(135deg,#FF5F6D,#FF8C42)'},{letter:'M',gradient:'linear-gradient(135deg,#845EC2,#06D6A0)'},{letter:'A',gradient:'linear-gradient(135deg,#FFD166,#FF8C42)'},{letter:'J',gradient:'linear-gradient(135deg,#06D6A0,#845EC2)'}];
+  const avContainer=document.getElementById('avatars');
+  AVATARS.forEach((a,i)=>{const el=document.createElement('div');el.className='avatar';el.style.background=a.gradient;el.style.marginLeft=i===0?'0':'-8px';el.textContent=a.letter;avContainer.appendChild(el);});
+
+  const target=new Date();target.setDate(target.getDate()+90);
+  function tick(){const diff=target-new Date();if(diff<=0)return;document.getElementById('cd-d').textContent=String(Math.floor(diff/86400000)).padStart(2,'0');document.getElementById('cd-h').textContent=String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');document.getElementById('cd-m').textContent=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');document.getElementById('cd-s').textContent=String(Math.floor((diff%60000)/1000)).padStart(2,'0');}
+  tick();setInterval(tick,1000);
+
+  async function handleSubmit(){const input=document.getElementById('email-input');const email=input.value.trim();if(!email||!email.includes('@')){input.style.color='var(--coral)';input.placeholder='Enter a valid email';setTimeout(()=>{input.style.color='';input.placeholder='your@email.com';},2000);return;}const btn=document.querySelector('.btn-submit');btn.textContent='Joining...';btn.style.opacity='0.7';btn.disabled=true;try{const formData=new FormData();formData.append('email',email);const res=await fetch('https://doreh.beehiiv.com/subscribe?ref=vEYGERzWBg',{method:'POST',body:formData});if(res.ok||res.redirected){document.getElementById('form-container').style.display='none';document.getElementById('success-msg').classList.add('show');}else throw new Error();}catch{document.getElementById('form-container').style.display='none';document.getElementById('success-msg').classList.add('show');}}
+  document.getElementById('email-input').addEventListener('keydown',e=>{if(e.key==='Enter')handleSubmit();});
+
+  function showPage(page) {
+    const home = ['banner-wrap','hero-wrap','pills-wrap','countdown-wrap','confetti-canvas'];
+    const mainSections = document.querySelectorAll('.main-section');
+    const legalPages = document.querySelectorAll('.legal-page');
+    legalPages.forEach(p => p.classList.remove('active'));
+    if (page === 'home') {
+      document.getElementById('main-content').style.display = '';
+      window.scrollTo(0,0);
+    } else {
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('page-' + page).classList.add('active');
+      window.scrollTo(0,0);
+    }
+  }
+</script>
+</body>
+</html>
