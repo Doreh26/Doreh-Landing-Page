@@ -43,16 +43,16 @@
     .nav-contact:hover { color:var(--coral); }
 
     .hero-wrap { position:relative; overflow:hidden; }
-    .hero { position:relative; z-index:1; min-height:calc(100vh - 110px); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:60px 24px 80px; }
+    .hero { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center; padding:20px 24px 60px; }
 
-    .eyebrow { display:inline-flex; align-items:center; gap:10px; border:1.5px solid rgba(255,95,109,0.2); border-radius:100px; padding:8px 22px; font-size:12px; font-weight:500; color:var(--muted); margin-bottom:56px; margin-top:-40px; background:rgba(255,255,255,0.7); backdrop-filter:blur(10px); box-shadow:0 4px 20px rgba(255,95,109,0.08); animation:fadeUp 0.7s ease both; }
+    .eyebrow { display:inline-flex; align-items:center; gap:10px; border:1.5px solid rgba(255,95,109,0.2); border-radius:100px; padding:8px 22px; font-size:12px; font-weight:500; color:var(--muted); margin-bottom:56px; margin-top:0px; background:rgba(255,255,255,0.7); backdrop-filter:blur(10px); box-shadow:0 4px 20px rgba(255,95,109,0.08); animation:fadeUp 0.7s ease both; }
     .eyebrow-dot { width:8px; height:8px; border-radius:50%; background:var(--coral); animation:pulseDot 2s ease-in-out infinite; }
 
-    h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(48px,7vw,96px); font-weight:700; line-height:0.92; letter-spacing:-2px; margin-bottom:28px; animation:fadeUp 0.7s 0.1s ease both; }
+    h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(56px,8vw,110px); font-weight:700; line-height:1.25; padding-bottom:8px; overflow:visible; letter-spacing:-2px; margin-bottom:28px; animation:fadeUp 0.7s 0.1s ease both; }
     h1 .line-dark { display:block; color:var(--ink); }
     h1 .line-grad { display:block; font-style:italic; background:linear-gradient(135deg,var(--coral) 0%,var(--orange) 45%,var(--gold) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
-    .subhead { font-size:clamp(16px,2vw,20px); color:var(--muted); font-weight:300; line-height:1.7; max-width:480px; margin:0 auto 52px; animation:fadeUp 0.7s 0.2s ease both; }
+    .subhead { font-size:clamp(16px,2vw,20px); color:var(--muted); font-weight:300; line-height:1.7; max-width:900px; margin:0 auto 52px; animation:fadeUp 0.7s 0.2s ease both; }
 
     .form-wrap { animation:fadeUp 0.7s 0.3s ease both; width:100%; display:flex; justify-content:center; }
     .form-inner { width:100%; max-width:460px; }
@@ -114,6 +114,34 @@
     .legal-section ul { padding-left:20px; margin-bottom:12px; }
     .legal-section ul li { font-size:15px; color:var(--muted); line-height:1.75; font-weight:300; margin-bottom:6px; }
     .legal-trademark { display:inline-block; font-size:13px; color:rgba(107,107,138,0.6); margin-top:32px; padding:12px 20px; border:1px solid rgba(255,95,109,0.1); border-radius:12px; background:rgba(255,255,255,0.5); }
+
+    .theme-toggle { position:fixed; bottom:24px; right:24px; z-index:100; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); border:1.5px solid rgba(255,95,109,0.25); border-radius:100px; padding:8px 18px; font-family:'Outfit',sans-serif; font-size:12px; font-weight:500; cursor:pointer; color:var(--muted); transition:all 0.2s; display:flex; align-items:center; gap:6px; box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+    .theme-toggle:hover { border-color:rgba(255,95,109,0.5); color:var(--coral); }
+    body.dark .theme-toggle { background:rgba(255,255,255,0.06); color:#9999BB; }
+
+    body.dark { --ink:#F0EEFF; --muted:#9999BB; --bg:#0D0D1A; }
+    body.dark .banner { background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,95,109,0.15); }
+    body.dark .banner-divider { background:rgba(255,255,255,0.12); }
+    body.dark .input-row { background:rgba(255,255,255,0.05); border-color:rgba(255,95,109,0.25); }
+    body.dark .input-row input { color:#F0EEFF; }
+    body.dark .input-row input::placeholder { color:rgba(255,255,255,0.25); }
+    body.dark .pill { background:rgba(255,255,255,0.04); border-color:rgba(255,95,109,0.2); }
+    body.dark .countdown { background:rgba(255,255,255,0.03); }
+    body.dark footer { background:rgba(255,255,255,0.03); border-top:1px solid rgba(255,255,255,0.06); }
+    body.dark .footer-links a { color:#6666AA; }
+    body.dark .footer-copy { color:#4444AA; }
+    body.dark .eyebrow { background:rgba(255,255,255,0.04); }
+    body.dark .legal-page { color:#F0EEFF; }
+    body.dark .legal-section h2 { color:#F0EEFF; }
+    body.dark .legal-title { color:#F0EEFF; }
+    body.dark .legal-trademark { background:rgba(255,255,255,0.03); border-color:rgba(255,95,109,0.15); }
+    body.dark .success-msg p { color:#F0EEFF; }
+    body.dark .proof-text { color:#6666AA; }
+    body.dark .proof-text strong { color:#F0EEFF; }
+    body.dark .avatar { border-color:#0D0D1A; }
+    body.dark h1 .line-dark { color:#F0EEFF; }
+    body.dark .form-note { color:rgba(255,255,255,0.2); }
+    body.dark .legal-back { color:#9999BB; }
   </style>
 </head>
 <body>
@@ -135,13 +163,13 @@
   <section class="hero">
     
     <h1><span class="line-dark">Celebrate</span><span class="line-grad">everything.</span></h1>
-    <p class="subhead">A new kind of platform for life's most meaningful moments.<br>Invitations, gifting, live streaming, vendor discovery all in one place.<br>Launching Summer 2026.</p>
+    <p class="subhead">A new kind of platform for life's most meaningful moments.<br>Invitations, gifting, live streaming, vendor discovery all in one place.<br><span style="display:block; margin-top:28px; font-family:'Cormorant Garamond',serif; font-size:1.2em; font-weight:700; font-style:italic; letter-spacing:-0.01em; background:linear-gradient(135deg,#FF5F6D,#FF8C42,#FFD166); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 20px rgba(255,95,109,0.3));">Launching Summer 2026</span></p>
     <div class="form-wrap">
       <div class="form-inner">
         <div id="form-container">
           <div class="input-row">
             <input type="email" id="email-input" placeholder="your@email.com" autocomplete="email" />
-            <button class="btn-submit" onclick="handleSubmit()">Get Early Access</button>
+            <button class="btn-submit" onclick="handleSubmit()">Get on the List</button>
           </div>
           <p class="form-note">No spam. Be the first to know when we launch.</p>
         </div>
@@ -309,6 +337,7 @@
   <div class="legal-trademark">Doreh™ is a registered trademark of Doreh, Inc. All rights reserved.</div>
 </div>
 
+<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
 <script>
   const FORMSPREE_URL = "https://doreh.beehiiv.com/subscribe?ref=vEYGERzWBg";
   const COLORS = ['#FF5F6D','#FF8C42','#FFD166','#06D6A0','#845EC2'];
@@ -348,7 +377,27 @@
       window.scrollTo(0,0);
     }
   }
+
+  function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById('theme-btn');
+    body.classList.toggle('dark');
+    if (body.classList.contains('dark')) {
+      btn.textContent = '☀️ Light';
+      localStorage.setItem('theme','dark');
+    } else {
+      btn.textContent = '🌙 Dark';
+      localStorage.setItem('theme','light');
+    }
+  }
+  // Restore saved theme
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.textContent = '☀️ Light';
+    });
+  }
 </script>
 </body>
 </html>
-<!-- live -->
