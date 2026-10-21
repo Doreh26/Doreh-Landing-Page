@@ -3,12 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Doreh — Every event, beautifully created</title>
-<meta name="description" content="From the first invitation to the last photo, every part of your event in one beautiful place.">
-<meta property="og:title" content="Doreh — Every event, beautifully created">
-<meta property="og:description" content="From the first invitation to the last photo, every part of your event in one beautiful place. Request early access.">
-<meta property="og:image" content="https://doreh.com/assets/hero-wedding.jpg">
+<title>Doreh · Invitations, RSVPs, gifts & memories for every event</title>
+<meta name="description" content="Doreh brings every part of your event into one beautiful place: digital invitations, RSVPs and guest lists, gifts, and the photos everyone takes. Weddings, birthdays, showers and more. Request early access.">
+<link rel="canonical" href="https://doreh.com/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Doreh">
+<meta property="og:url" content="https://doreh.com/">
+<meta property="og:title" content="Doreh · Every event, beautifully created">
+<meta property="og:description" content="Invitations, RSVPs, gifts and memories for every event, in one beautiful place. Request early access.">
+<meta property="og:image" content="https://doreh.com/assets/og-image.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Every event, beautifully created. Remembered forever.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Doreh · Every event, beautifully created">
+<meta name="twitter:description" content="Invitations, RSVPs, gifts and memories for every event, in one beautiful place.">
+<meta name="twitter:image" content="https://doreh.com/assets/og-image.jpg">
 <meta name="theme-color" content="#1b140d">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Organization","@id":"https://doreh.com/#org","name":"Doreh","legalName":"Doreh, Inc.","url":"https://doreh.com/","logo":"https://doreh.com/assets/icon-512.png",
+  "address":{"@type":"PostalAddress","streetAddress":"8549 Wilshire Blvd. #2181","addressLocality":"Beverly Hills","addressRegion":"CA","postalCode":"90212","addressCountry":"US"}},
+ {"@type":"WebSite","@id":"https://doreh.com/#site","url":"https://doreh.com/","name":"Doreh","publisher":{"@id":"https://doreh.com/#org"}}
+]}
+</script>
 <link rel="preload" as="image" href="/assets/hero-wedding.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,6 +112,22 @@ h1 em{font-style:italic;color:var(--champagne)}
   .legal{left:22px;right:auto}
 }
 
+
+/* below the hero: a short, visible summary for people and search engines */
+.more{background:#000;padding:clamp(72px,12vh,120px) 0 28px}
+.more-in,.more .legal{max-width:1320px;margin-left:auto;margin-right:auto;padding-left:clamp(22px,4vw,56px);padding-right:clamp(22px,4vw,56px)}
+.more h2{font-family:var(--serif);font-weight:500;font-size:clamp(34px,4.4vw,56px);line-height:1;letter-spacing:-.5px;color:var(--cream)}
+.more h2 em{font-style:italic;color:var(--champagne)}
+.cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:36px;margin-top:48px}
+.cols h3{font-family:var(--serif);font-weight:500;font-size:24px;color:var(--cream)}
+.cols p{margin-top:8px;font-size:15px;line-height:1.6;color:rgba(255,255,255,.66)}
+.occ{margin-top:52px;font-size:14px;letter-spacing:.3px;color:rgba(255,255,255,.5)}
+.again{display:inline-block;margin-top:28px;color:var(--champagne);font-size:15px;border-bottom:1px solid rgba(229,193,88,.5);padding-bottom:3px}
+.more .legal{position:static;margin-top:clamp(64px,10vh,100px);justify-content:flex-start;align-items:center}
+.more .legal span{margin-left:auto}
+@media (max-width:900px){.cols{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}}
+@media (max-width:520px){.cols{grid-template-columns:1fr}.more .legal span{margin-left:0}.more .legal{flex-wrap:wrap}}
+
 /* pop-ups */
 dialog{margin:auto;border:0;padding:0;background:#000;border:1px solid rgba(255,255,255,.08);color:var(--cream);border-radius:22px;width:min(640px,calc(100vw - 32px));max-height:min(86vh,820px);
   box-shadow:0 40px 120px rgba(0,0,0,.6);overflow:hidden}
@@ -142,7 +180,7 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
 </header>
 
 <main class="hero" id="hero">
-  <div class="photo" aria-hidden="true">
+  <div class="photo" role="img" aria-label="A couple celebrating at their wedding reception, among other celebrations: a backyard barbecue, a baby shower, a first birthday, a Thanksgiving dinner and a graduation">
     <div class="bg on" style="background-image:url('/assets/hero-wedding.jpg')"></div>
     <div class="bg" data-src="/assets/hero-bbq.jpg"></div>
     <div class="bg" data-src="/assets/hero-babyshower.jpg"></div>
@@ -176,9 +214,22 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
     </form>
     <div class="done" role="status"><b>You're <em>on the list.</em></b><p>We'll email you when your invite is ready.</p></div>
   </div>
-  <!-- gstack-shortcut(dec-f9fafb2d): hero only, no product screens; upgrade when sign-ups stall or an engineer is hired (add Invite/Gather/Give/Keep strip) -->
-  <nav class="legal"><a href="/privacy" data-open="legal" data-tab="privacy">Privacy &amp; Terms</a><a href="/contact" data-open="contact">Contact</a></nav>
 </main>
+
+<section class="more" aria-labelledby="more-h">
+  <div class="more-in">
+    <h2 id="more-h">One home for <em>every event.</em></h2>
+    <div class="cols">
+      <div><h3>Invitations</h3><p>Digital invitations designed for your event, sent by text or email.</p></div>
+      <div><h3>RSVPs &amp; guests</h3><p>Replies, plus-ones and your guest list, always up to date.</p></div>
+      <div><h3>Gifts</h3><p>Gifts and group gifts, without the guesswork.</p></div>
+      <div><h3>Memories</h3><p>Every photo from the day, kept in one shared album.</p></div>
+    </div>
+    <p class="occ">Weddings · Birthdays · Baby showers · Engagements · Anniversaries · Graduations · Holidays · Dinners · Company events</p>
+    <a class="again" href="#hero" data-top>Request early access</a>
+  </div>
+  <nav class="legal"><a href="/privacy" data-open="legal" data-tab="privacy">Privacy &amp; Terms</a><a href="/contact" data-open="contact">Contact</a><span>© Doreh, Inc.</span></nav>
+</section>
 
 <dialog id="legal" aria-label="Privacy and Terms">
   <div class="dh"><button class="tab" data-tab="privacy">Privacy</button><button class="tab" data-tab="terms">Terms</button><button class="x" data-close aria-label="Close">&times;</button></div>
@@ -254,6 +305,7 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
       if(a.dataset.open==='legal'){showTab(a.dataset.tab||'privacy');legal.showModal()}
       else{openedAt=Date.now();contact.showModal()}
       return}
+    var top=e.target.closest('[data-top]'); if(top){e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});setTimeout(function(){var em=document.getElementById('email');if(em)em.focus({preventScroll:true})},500);return}
     var tab=e.target.closest('.tab'); if(tab){showTab(tab.dataset.tab);return}
     if(e.target.closest('[data-close]')){e.target.closest('dialog').close();return}
     if(e.target.tagName==='DIALOG') e.target.close(); // click on the dimmed backdrop
