@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact · Doreh</title>
+<meta name="description" content="Get in touch with Doreh.">
+<meta name="theme-color" content="#1b140d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--espresso:#1B140D;--gold:#C8941A;--champagne:#E5C158;--cream:#FBF5E9;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Outfit',system-ui,sans-serif;--ease:cubic-bezier(.22,.61,.36,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:radial-gradient(1200px 700px at 20% 0%,#2A2117,var(--espresso));color:var(--cream);min-height:100vh;min-height:100svh;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.top{padding:22px clamp(22px,4vw,56px);padding-top:max(22px,env(safe-area-inset-top))}
+.mark{color:#fff;display:inline-flex}
+main{max-width:560px;padding:clamp(40px,10vh,110px) clamp(22px,4vw,56px) 80px;margin-left:clamp(0px,calc((100vw - 1320px)/2),400px)}
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,5vw,64px);line-height:1;letter-spacing:-1px}
+h1 em{font-style:italic;color:var(--champagne)}
+form{margin-top:40px;display:flex;flex-direction:column;gap:26px}
+.as{display:flex;align-items:baseline;gap:22px;flex-wrap:wrap;font-size:15px}
+.as span{color:rgba(255,255,255,.62)}
+.as label{cursor:pointer}
+.as input{position:absolute;opacity:0;pointer-events:none}
+.as b{font-weight:400;color:rgba(255,255,255,.78);padding-bottom:4px;border-bottom:1px solid transparent;transition:color .15s,border-color .15s}
+.as label:hover b{color:#fff}
+.as input:checked+b{color:var(--champagne);border-bottom-color:var(--champagne);font-weight:500}
+.as input:focus-visible+b{outline:2px solid var(--champagne);outline-offset:4px}
+.f{background:none;border:0;border-bottom:1px solid rgba(255,255,255,.4);border-radius:0;outline:0;color:#fff;font:400 17px var(--sans);padding:12px 2px;width:100%;transition:border-color .2s}
+.f:focus{border-bottom-color:var(--champagne)}
+.f::placeholder{color:rgba(255,255,255,.55)}
+textarea.f{resize:vertical;min-height:120px;line-height:1.5}
+button{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#fff;border:0;border-radius:999px;
+  font:500 15px var(--sans);letter-spacing:.2px;padding:14px 28px;cursor:pointer;box-shadow:0 12px 32px -10px rgba(200,148,26,.6);transition:transform .2s var(--ease),opacity .2s}
+button:hover{transform:translateY(-1px)}
+button[disabled]{opacity:.6;cursor:default;transform:none}
+button svg{width:16px;height:16px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.msg{min-height:20px;font-size:13.5px;color:rgba(255,255,255,.7);margin-top:-12px}
+.msg.err{color:#F2B8A0}
+.done{display:none;margin-top:40px}
+.done b{display:block;font-family:var(--serif);font-weight:500;font-size:32px}
+.done b em{color:var(--champagne)}
+.done p{margin-top:8px;font-size:15px;color:rgba(255,255,255,.78)}
+.done a{display:inline-block;margin-top:24px;color:var(--champagne);font-size:14px}
+.sent form{display:none}.sent .done{display:block}
+@media (max-width:640px){button{align-self:stretch;justify-content:center}.as{gap:16px;font-size:14.5px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="/" class="mark" aria-label="doreh"><svg width="21" height="28" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="20" r="10"></circle><line x1="23" y1="2" x2="23" y2="30" stroke-linecap="square"></line></svg></a>
+</header>
+<main id="main">
+  <h1>Get in <em>touch.</em></h1>
+  <form id="cf" novalidate>
+    <div class="as" role="radiogroup" aria-label="I'm a">
+      <span>I'm a</span>
+      <label><input type="radio" name="topic" value="host"><b>Host</b></label>
+      <label><input type="radio" name="topic" value="planner"><b>Planner</b></label>
+      <label><input type="radio" name="topic" value="vendor"><b>Vendor</b></label>
+      <label><input type="radio" name="topic" value="investor"><b>Investor</b></label>
+      <label><input type="radio" name="topic" value="other"><b>Other</b></label>
+    </div>
+    <input class="f" type="text" name="name" placeholder="Name" autocomplete="name" aria-label="Name" maxlength="120">
+    <input class="f" type="email" name="email" placeholder="Email" autocomplete="email" aria-label="Email" maxlength="200">
+    <textarea class="f" name="message" placeholder="Message" aria-label="Message" maxlength="4000"></textarea>
+    <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    <button type="submit" id="go">Send
+      <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </form>
+  <div class="done" role="status"><b>Message <em>sent.</em></b><p>We'll get back to you soon.</p><a href="/">← doreh.com</a></div>
+</main>
+<script>
+(function(){
+  var f=document.getElementById('cf'),el=f.elements,go=document.getElementById('go'),msg=document.getElementById('msg');
+  // /contact?topic=investor preselects a choice
+  var t=new URLSearchParams(location.search).get('topic');
+  var pre=t&&f.querySelector('input[name=topic][value="'+t.replace(/[^a-z]/g,'')+'"]'); if(pre) pre.checked=true;
+  function say(s,err){msg.textContent=s;msg.className='msg'+(err?' err':'')}
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var topic=f.querySelector('input[name=topic]:checked');
+    var name=el.name.value.trim(), email=el.email.value.trim(), message=el.message.value.trim();
+    if(!topic){say('Pick Host, Planner, Vendor, Investor or Other.',true);return}
+    if(!name){say('Enter your name.',true);el.name.focus();return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){say('Enter a valid email.',true);el.email.focus();return}
+    if(!message){say('Write a message.',true);el.message.focus();return}
+    go.disabled=true;say('');
+    fetch('/api/contact',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({topic:topic.value,name:name,email:email,message:message,website:el.website.value})})
+      .then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok)throw new Error(d.error||'');return d})})
+      .then(function(){document.getElementById('main').classList.add('sent')})
+      .catch(function(err){go.disabled=false;say(err.message||'That did not go through. Try again.',true)});
+  });
+})();
+</script>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

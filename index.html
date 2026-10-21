@@ -83,11 +83,53 @@ h1 em{font-style:italic;color:var(--champagne)}
   .inner{padding-bottom:84px}
   .mast .ln{width:28px}
   .mast .lbl{font-size:9.5px;letter-spacing:2px}
-  .as{gap:18px}
+  .as{gap:16px;font-size:14.5px}
   .ea-row{flex-direction:column;align-items:stretch;gap:18px}
   .ea input[type=email]{padding:12px 2px}
   .ea button{justify-content:center;width:100%}
   .legal{left:22px;right:auto}
+}
+
+/* pop-ups */
+dialog{margin:auto;border:0;padding:0;background:#1F1810;color:var(--cream);border-radius:22px;width:min(640px,calc(100vw - 32px));max-height:min(86vh,820px);
+  box-shadow:0 40px 120px rgba(0,0,0,.6);overflow:hidden}
+dialog::backdrop{background:rgba(12,9,6,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+dialog[open]{display:flex;flex-direction:column;animation:pop .22s var(--ease)}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.dh{display:flex;align-items:center;gap:22px;padding:22px 26px 0}
+.dh .x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.6);font-size:22px;line-height:1;cursor:pointer;padding:6px}
+.dh .x:hover{color:#fff}
+.tab{background:none;border:0;color:rgba(255,255,255,.6);font:400 15px var(--sans);padding:6px 0;border-bottom:1px solid transparent;cursor:pointer}
+.tab.on{color:var(--champagne);border-bottom-color:var(--champagne);font-weight:500}
+.db{overflow:auto;padding:22px 26px 30px;-webkit-overflow-scrolling:touch}
+.db h2{font-family:var(--serif);font-weight:500;font-size:22px;margin:22px 0 6px}
+.db p,.db li{font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.76)}
+.db a{color:var(--champagne)}
+.db .legal-title{font-family:var(--serif);font-weight:500;font-size:34px;line-height:1.1;color:var(--cream)}
+.db .legal-updated{font-size:12.5px;color:rgba(255,255,255,.5);margin-top:4px}
+.db .legal-trademark{font-size:12px;color:rgba(255,255,255,.5);margin-top:28px}
+.dt{font-family:var(--serif);font-weight:500;font-size:34px;line-height:1}
+.dt em{font-style:italic;color:var(--champagne)}
+#cf{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+#cf .as{flex-wrap:wrap;gap:18px;margin:0}
+.f{background:none;border:0;border-bottom:1px solid rgba(255,255,255,.4);border-radius:0;outline:0;color:#fff;font:400 16px var(--sans);padding:11px 2px;width:100%;transition:border-color .2s}
+.f:focus{border-bottom-color:var(--champagne)}
+.f::placeholder{color:rgba(255,255,255,.55)}
+textarea.f{resize:vertical;min-height:110px;line-height:1.5}
+#cf button{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#fff;border:0;border-radius:999px;
+  font:500 15px var(--sans);letter-spacing:.2px;padding:14px 28px;cursor:pointer;box-shadow:0 12px 32px -10px rgba(200,148,26,.6);transition:transform .2s var(--ease),opacity .2s}
+#cf button:hover{transform:translateY(-1px)}
+#cf button[disabled]{opacity:.6;cursor:default;transform:none}
+#cf button svg{width:16px;height:16px}
+.db ul{padding-left:20px;margin:6px 0}
+#cmsg{margin-top:-8px}
+.cdone{display:none;margin-top:18px}
+.cdone p{margin-top:6px;font-size:15px;color:rgba(255,255,255,.78)}
+.csent #cf{display:none}.csent .cdone{display:block}
+@media (max-width:640px){
+  dialog{width:100vw;max-width:100vw;height:100svh;max-height:100svh;border-radius:0;margin:0}
+  #cf button{align-self:stretch;justify-content:center}
+  #cf .as{gap:14px;font-size:14px}
 }
 @media (prefers-reduced-motion:reduce){.bg{transition:none}}
 </style>
@@ -133,8 +175,37 @@ h1 em{font-style:italic;color:var(--champagne)}
     <div class="done" role="status"><b>You're <em>on the list.</em></b><p>We'll email you when your invite is ready.</p></div>
   </div>
   <!-- gstack-shortcut(dec-f9fafb2d): hero only, no product screens; upgrade when sign-ups stall or an engineer is hired (add Invite/Gather/Give/Keep strip) -->
-  <nav class="legal"><a href="mailto:hello@doreh.com?subject=Investor%20inquiry%20%C2%B7%20Doreh">Investors</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:hello@doreh.com">Contact</a></nav>
+  <nav class="legal"><a href="/contact?topic=investor" data-open="contact" data-topic="investor">Investors</a><a href="/privacy" data-open="legal" data-tab="privacy">Privacy &amp; Terms</a><a href="/contact" data-open="contact">Contact</a></nav>
 </main>
+
+<dialog id="legal" aria-label="Privacy and Terms">
+  <div class="dh"><button class="tab" data-tab="privacy">Privacy</button><button class="tab" data-tab="terms">Terms</button><button class="x" data-close aria-label="Close">&times;</button></div>
+  <div class="db" id="legalBody"></div>
+</dialog>
+<dialog id="contact" aria-label="Contact">
+  <div class="dh"><div class="dt">Get in <em>touch.</em></div><button class="x" data-close aria-label="Close">&times;</button></div>
+  <div class="db" id="contactBody">
+    <form id="cf" novalidate>
+      <div class="as" role="radiogroup" aria-label="I'm a">
+        <span>I'm a</span>
+        <label><input type="radio" name="topic" value="host"><b>Host</b></label>
+        <label><input type="radio" name="topic" value="planner"><b>Planner</b></label>
+        <label><input type="radio" name="topic" value="vendor"><b>Vendor</b></label>
+        <label><input type="radio" name="topic" value="investor"><b>Investor</b></label>
+        <label><input type="radio" name="topic" value="other"><b>Other</b></label>
+      </div>
+      <input class="f" type="text" name="name" placeholder="Name" autocomplete="name" aria-label="Name" maxlength="120">
+      <input class="f" type="email" name="email" placeholder="Email" autocomplete="email" aria-label="Email" maxlength="200">
+      <textarea class="f" name="message" placeholder="Message" aria-label="Message" maxlength="4000"></textarea>
+      <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <div class="msg" id="cmsg" role="status" aria-live="polite"></div>
+      <button type="submit" id="cgo">Send
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
+    <div class="cdone" role="status"><b class="dt">Message <em>sent.</em></b><p>We'll get back to you soon.</p></div>
+  </div>
+</dialog>
 
 <script>
 (function(){
@@ -160,6 +231,54 @@ h1 em{font-style:italic;color:var(--champagne)}
       body:JSON.stringify({email:email,role:role,website:f.website.value,ref:document.referrer||''})})
       .then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok)throw new Error(d.error||'');return d})})
       .then(function(){document.getElementById('hero').classList.add('sent');try{window.va('event',{name:'early_access',data:{role:role}})}catch(e){}})
+      .catch(function(err){go.disabled=false;say(err.message||'That did not go through. Try again.',true)});
+  });
+})();
+</script>
+<script>
+(function(){
+  // pop-ups: Privacy & Terms (text loaded from /privacy and /terms) and Contact
+  if(typeof HTMLDialogElement==='undefined') return; // old browsers follow the links instead
+  var legal=document.getElementById('legal'),contact=document.getElementById('contact'),cache={};
+  function showTab(t){
+    [].forEach.call(legal.querySelectorAll('.tab'),function(b){b.classList.toggle('on',b.dataset.tab===t)});
+    var body=document.getElementById('legalBody');
+    if(cache[t]){body.innerHTML=cache[t];body.scrollTop=0;return}
+    body.innerHTML='';
+    fetch('/'+t).then(function(r){return r.text()}).then(function(h){
+      var d=new DOMParser().parseFromString(h,'text/html').querySelector('.legal-page');
+      cache[t]=d?d.innerHTML:'<p>Open <a href="/'+t+'">doreh.com/'+t+'</a>.</p>';
+      body.innerHTML=cache[t];body.scrollTop=0;
+    }).catch(function(){body.innerHTML='<p>Open <a href="/'+t+'">doreh.com/'+t+'</a>.</p>'});
+  }
+  document.addEventListener('click',function(e){
+    var c=e.target.closest('#legalBody a[href^="/contact"]'); // 'our contact form' inside the legal text
+    if(c){e.preventDefault();legal.close();contact.showModal();return}
+    var a=e.target.closest('[data-open]');
+    if(a){e.preventDefault();
+      if(a.dataset.open==='legal'){showTab(a.dataset.tab||'privacy');legal.showModal()}
+      else{var t=a.dataset.topic,r=t&&contact.querySelector('input[name=topic][value="'+t+'"]');if(r)r.checked=true;contact.showModal()}
+      return}
+    var tab=e.target.closest('.tab'); if(tab){showTab(tab.dataset.tab);return}
+    if(e.target.closest('[data-close]')){e.target.closest('dialog').close();return}
+    if(e.target.tagName==='DIALOG') e.target.close(); // click on the dimmed backdrop
+  });
+  // contact form
+  var f=document.getElementById('cf'),el=f.elements,go=document.getElementById('cgo'),msg=document.getElementById('cmsg');
+  function say(s,err){msg.textContent=s;msg.className='msg'+(err?' err':'')}
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var topic=f.querySelector('input[name=topic]:checked');
+    var name=el.name.value.trim(),email=el.email.value.trim(),message=el.message.value.trim();
+    if(!topic){say('Pick Host, Planner, Vendor, Investor or Other.',true);return}
+    if(!name){say('Enter your name.',true);el.name.focus();return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){say('Enter a valid email.',true);el.email.focus();return}
+    if(!message){say('Write a message.',true);el.message.focus();return}
+    go.disabled=true;say('');
+    fetch('/api/contact',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({topic:topic.value,name:name,email:email,message:message,website:el.website.value})})
+      .then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok)throw new Error(d.error||'');return d})})
+      .then(function(){contact.classList.add('csent')})
       .catch(function(err){go.disabled=false;say(err.message||'That did not go through. Try again.',true)});
   });
 })();
