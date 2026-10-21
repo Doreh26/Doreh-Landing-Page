@@ -47,20 +47,19 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(43px,7.05vw,102px);l
 h1 em{font-style:italic;color:var(--champagne)}
 .sub{font-size:clamp(16px,1.4vw,19px);font-weight:300;line-height:1.66;color:rgba(255,255,255,.82);max-width:33em;margin-top:24px}
 
-/* early access: one box holds who you are, your email and the button */
+/* early access: text role choice, underlined email, one gold button */
 .ea{margin-top:34px;max-width:560px}
-.as{display:flex;align-items:center;gap:6px;margin-bottom:12px}
-.as span{font-size:13px;color:rgba(255,255,255,.62);margin-right:6px;white-space:nowrap}
-.as label{cursor:pointer;flex:1}
+.as{display:flex;align-items:baseline;gap:22px;margin-bottom:18px;font-size:15px}
+.as span{color:rgba(255,255,255,.62)}
+.as label{cursor:pointer}
 .as input{position:absolute;opacity:0;pointer-events:none}
-.as b{display:block;text-align:center;font-weight:400;font-size:14px;color:rgba(255,255,255,.82);background:rgba(255,255,255,.08);border:1px solid transparent;border-radius:999px;padding:9px 0;transition:all .15s}
-.as label:hover b{background:rgba(255,255,255,.14)}
-.as input:checked+b{background:var(--champagne);border-color:var(--champagne);color:var(--espresso);font-weight:500}
-.as input:focus-visible+b{outline:2px solid var(--champagne);outline-offset:2px}
-.ea-row{display:flex;gap:8px}
-.ea input[type=email]{background:rgba(255,255,255,.1);border-radius:999px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:background .2s}
-.ea input[type=email]:focus{background:rgba(255,255,255,.16)}
-.ea input[type=email]{flex:1;min-width:0;border:0;outline:0;color:#fff;font:400 16px var(--sans);padding:0 22px}
+.as b{font-weight:400;color:rgba(255,255,255,.78);padding-bottom:4px;border-bottom:1px solid transparent;transition:color .15s,border-color .15s}
+.as label:hover b{color:#fff}
+.as input:checked+b{color:var(--champagne);border-bottom-color:var(--champagne);font-weight:500}
+.as input:focus-visible+b{outline:2px solid var(--champagne);outline-offset:4px}
+.ea-row{display:flex;align-items:center;gap:18px}
+.ea input[type=email]{flex:1;min-width:0;background:none;border:0;border-bottom:1px solid rgba(255,255,255,.4);border-radius:0;outline:0;color:#fff;font:400 17px var(--sans);padding:12px 2px;transition:border-color .2s}
+.ea input[type=email]:focus{border-bottom-color:var(--champagne)}
 .ea input[type=email]::placeholder{color:rgba(255,255,255,.55)}
 .ea button{flex:none;display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#fff;border:0;border-radius:999px;
   font:500 15px var(--sans);letter-spacing:.2px;padding:14px 26px;cursor:pointer;box-shadow:0 12px 32px -10px rgba(200,148,26,.6);transition:transform .2s var(--ease),opacity .2s}
@@ -84,9 +83,9 @@ h1 em{font-style:italic;color:var(--champagne)}
   .inner{padding-bottom:84px}
   .mast .ln{width:28px}
   .mast .lbl{font-size:9.5px;letter-spacing:2px}
-  .as span{margin-right:2px}
-  .ea-row{flex-direction:column;gap:6px}
-  .ea input[type=email]{padding:15px 20px}
+  .as{gap:18px}
+  .ea-row{flex-direction:column;align-items:stretch;gap:18px}
+  .ea input[type=email]{padding:12px 2px}
   .ea button{justify-content:center;width:100%}
   .legal{left:22px;right:auto}
 }
@@ -114,7 +113,7 @@ h1 em{font-style:italic;color:var(--champagne)}
     <p class="sub">From the first invitation to the last photo, every part of your event in one beautiful place.</p>
 
     <form class="ea" id="ea" novalidate>
-      <div class="ea-box">
+      <div>
         <div class="as" role="radiogroup" aria-label="I'm a">
           <span>I'm a</span>
           <label><input type="radio" name="role" value="host"><b>Host</b></label>
