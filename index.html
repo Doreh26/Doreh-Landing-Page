@@ -175,7 +175,7 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
     <div class="done" role="status"><b>You're <em>on the list.</em></b><p>We'll email you when your invite is ready.</p></div>
   </div>
   <!-- gstack-shortcut(dec-f9fafb2d): hero only, no product screens; upgrade when sign-ups stall or an engineer is hired (add Invite/Gather/Give/Keep strip) -->
-  <nav class="legal"><a href="/contact?topic=investor" data-open="contact" data-topic="investor">Investors</a><a href="/privacy" data-open="legal" data-tab="privacy">Privacy &amp; Terms</a><a href="/contact" data-open="contact">Contact</a></nav>
+  <nav class="legal"><a href="/privacy" data-open="legal" data-tab="privacy">Privacy &amp; Terms</a><a href="/contact" data-open="contact">Contact</a></nav>
 </main>
 
 <dialog id="legal" aria-label="Privacy and Terms">
@@ -186,16 +186,9 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
   <div class="dh"><div class="dt">Get in <em>touch.</em></div><button class="x" data-close aria-label="Close">&times;</button></div>
   <div class="db" id="contactBody">
     <form id="cf" novalidate>
-      <div class="as" role="radiogroup" aria-label="I'm a">
-        <span>I'm a</span>
-        <label><input type="radio" name="topic" value="host"><b>Host</b></label>
-        <label><input type="radio" name="topic" value="planner"><b>Planner</b></label>
-        <label><input type="radio" name="topic" value="vendor"><b>Vendor</b></label>
-        <label><input type="radio" name="topic" value="investor"><b>Investor</b></label>
-        <label><input type="radio" name="topic" value="other"><b>Other</b></label>
-      </div>
       <input class="f" type="text" name="name" placeholder="Name" autocomplete="name" aria-label="Name" maxlength="120">
       <input class="f" type="email" name="email" placeholder="Email" autocomplete="email" aria-label="Email" maxlength="200">
+      <input class="f" type="text" name="subject" placeholder="Subject" aria-label="Subject" maxlength="200">
       <textarea class="f" name="message" placeholder="Message" aria-label="Message" maxlength="4000"></textarea>
       <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="msg" id="cmsg" role="status" aria-live="polite"></div>
@@ -217,7 +210,7 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
   setInterval(function(){bgs[i].classList.remove('on');i=(i+1)%bgs.length;load(bgs[i]);bgs[i].classList.add('on');load(bgs[(i+1)%bgs.length])},5200);
 })();
 (function(){
-  var f=document.getElementById('ea'),go=document.getElementById('go'),msg=document.getElementById('msg'),em=document.getElementById('email');
+  var loadedAt=Date.now(),f=document.getElementById('ea'),go=document.getElementById('go'),msg=document.getElementById('msg'),em=document.getElementById('email');
   function say(t,err){msg.textContent=t;msg.className='msg'+(err?' err':'')}
   f.addEventListener('submit',function(e){
     e.preventDefault();
@@ -228,7 +221,7 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
     var role=picked.value;
     go.disabled=true;say('');
     fetch('/api/early-access',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({email:email,role:role,website:f.website.value,ref:document.referrer||''})})
+      body:JSON.stringify({email:email,role:role,website:f.website.value,ref:document.referrer||'',elapsed:Date.now()-loadedAt})})
       .then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok)throw new Error(d.error||'');return d})})
       .then(function(){document.getElementById('hero').classList.add('sent');try{window.va('event',{name:'early_access',data:{role:role}})}catch(e){}})
       .catch(function(err){go.disabled=false;say(err.message||'That did not go through. Try again.',true)});
@@ -239,7 +232,7 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
 (function(){
   // pop-ups: Privacy & Terms (text loaded from /privacy and /terms) and Contact
   if(typeof HTMLDialogElement==='undefined') return; // old browsers follow the links instead
-  var legal=document.getElementById('legal'),contact=document.getElementById('contact'),cache={};
+  var legal=document.getElementById('legal'),contact=document.getElementById('contact'),cache={},openedAt=Date.now();
   function showTab(t){
     [].forEach.call(legal.querySelectorAll('.tab'),function(b){b.classList.toggle('on',b.dataset.tab===t)});
     var body=document.getElementById('legalBody');
@@ -253,11 +246,11 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
   }
   document.addEventListener('click',function(e){
     var c=e.target.closest('#legalBody a[href^="/contact"]'); // 'our contact form' inside the legal text
-    if(c){e.preventDefault();legal.close();contact.showModal();return}
+    if(c){e.preventDefault();legal.close();openedAt=Date.now();contact.showModal();return}
     var a=e.target.closest('[data-open]');
     if(a){e.preventDefault();
       if(a.dataset.open==='legal'){showTab(a.dataset.tab||'privacy');legal.showModal()}
-      else{var t=a.dataset.topic,r=t&&contact.querySelector('input[name=topic][value="'+t+'"]');if(r)r.checked=true;contact.showModal()}
+      else{openedAt=Date.now();contact.showModal()}
       return}
     var tab=e.target.closest('.tab'); if(tab){showTab(tab.dataset.tab);return}
     if(e.target.closest('[data-close]')){e.target.closest('dialog').close();return}
@@ -268,15 +261,14 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
   function say(s,err){msg.textContent=s;msg.className='msg'+(err?' err':'')}
   f.addEventListener('submit',function(e){
     e.preventDefault();
-    var topic=f.querySelector('input[name=topic]:checked');
-    var name=el.name.value.trim(),email=el.email.value.trim(),message=el.message.value.trim();
-    if(!topic){say('Pick Host, Planner, Vendor, Investor or Other.',true);return}
+    var name=el.name.value.trim(),email=el.email.value.trim(),subject=el.subject.value.trim(),message=el.message.value.trim();
     if(!name){say('Enter your name.',true);el.name.focus();return}
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){say('Enter a valid email.',true);el.email.focus();return}
+    if(!subject){say('Add a subject.',true);el.subject.focus();return}
     if(!message){say('Write a message.',true);el.message.focus();return}
     go.disabled=true;say('');
     fetch('/api/contact',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({topic:topic.value,name:name,email:email,message:message,website:el.website.value})})
+      body:JSON.stringify({name:name,email:email,subject:subject,message:message,website:el.website.value,elapsed:Date.now()-openedAt})})
       .then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok)throw new Error(d.error||'');return d})})
       .then(function(){contact.classList.add('csent')})
       .catch(function(err){go.disabled=false;say(err.message||'That did not go through. Try again.',true)});

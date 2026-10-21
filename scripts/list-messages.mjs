@@ -1,5 +1,5 @@
 // Lists contact-form messages, newest first.
-// Same setup as list-early-access.mjs:  node --env-file=.env.local scripts/list-messages.mjs [investor|host|planner|vendor|other]
+// Same setup as list-early-access.mjs:  node --env-file=.env.local scripts/list-messages.mjs [word to search for]
 import { list, get } from '@vercel/blob';
 
 const only = process.argv[2];
@@ -13,9 +13,10 @@ do {
   }
   cursor = page.hasMore ? page.cursor : undefined;
 } while (cursor);
-const shown = rows.filter((r) => !only || r.topic === only).sort((a, b) => (a.at < b.at ? 1 : -1));
-console.log(shown.length, 'message(s)' + (only ? ' from ' + only + 's' : ''));
+const shown = rows.filter((r) => !only || (r.subject + ' ' + r.message).toLowerCase().includes(only.toLowerCase())).sort((a, b) => (a.at < b.at ? 1 : -1));
+console.log(shown.length, 'message(s)' + (only ? ' matching "' + only + '"' : ''));
 for (const r of shown) {
-  console.log('\n' + r.at.slice(0, 16).replace('T', ' '), '|', r.topic, '|', r.name, '<' + r.email + '>', r.country ? '| ' + r.country : '');
+  console.log('\n' + r.at.slice(0, 16).replace('T', ' '), '|', r.name, '<' + r.email + '>', r.country ? '| ' + r.country : '');
+  console.log('  Subject: ' + (r.subject || '(none)'));
   console.log('  ' + r.message.replace(/\n/g, '\n  '));
 }

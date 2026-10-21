@@ -2,6 +2,7 @@
 // Needs a Vercel Blob store connected to this project (provides BLOB_READ_WRITE_TOKEN).
 import { put, get } from '@vercel/blob';
 import { createHash } from 'node:crypto';
+import { sameSite, looksLikeSpam, overLimit } from './_guard.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ROLES = new Set(['host', 'planner', 'vendor']);
@@ -14,13 +15,14 @@ function json(body, status = 200) {
 }
 
 export async function POST(request) {
+  if (!sameSite(request)) return json({ error: 'Send this from doreh.com.' }, 403);
   const text = await request.text();
   if (text.length > 4000) return json({ error: 'Too large.' }, 413);
   let body;
   try { body = JSON.parse(text); } catch { return json({ error: 'Try again.' }, 400); }
 
-  // bots fill the hidden field; pretend it worked
-  if (body.website) return json({ ok: true });
+  // bots get a normal-looking success so they don't adapt
+  if (looksLikeSpam(body, 2) === 'bot') return json({ ok: true });
 
   const email = String(body.email || '').trim().toLowerCase().slice(0, 200);
   if (!EMAIL_RE.test(email)) return json({ error: 'Enter a valid email.' }, 400);
@@ -30,6 +32,7 @@ export async function POST(request) {
   const path = prefix + createHash('sha256').update(email).digest('hex') + '.json';
 
   try {
+    if (await overLimit(request, 'early-access', 10)) return json({ error: 'Too many tries. Try again in an hour.' }, 429);
     // already signed up: keep the first record
     const existing = await get(path, { access: 'private', useCache: false });
     if (existing && existing.statusCode === 200) return json({ ok: true });
