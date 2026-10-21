@@ -47,29 +47,31 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(43px,7.05vw,102px);l
 h1 em{font-style:italic;color:var(--champagne)}
 .sub{font-size:clamp(16px,1.4vw,19px);font-weight:300;line-height:1.66;color:rgba(255,255,255,.82);max-width:33em;margin-top:24px}
 
-/* early access */
-.ea{margin-top:34px;max-width:520px}
-.ea-row{display:flex;gap:8px;background:rgba(20,15,9,.5);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px;
+/* early access: one box holds who you are, your email and the button */
+.ea{margin-top:34px;max-width:560px}
+.ea-box{background:rgba(20,15,9,.5);border:1px solid rgba(255,255,255,.28);border-radius:24px;padding:8px;
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:border-color .2s}
-.ea-row:focus-within{border-color:var(--champagne)}
-.ea input[type=email]{flex:1;min-width:0;background:none;border:0;outline:0;color:#fff;font:400 16px var(--sans);padding:0 18px}
+.ea-box:focus-within{border-color:var(--champagne)}
+.as{display:flex;align-items:center;gap:6px;padding:4px 4px 10px 12px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.14)}
+.as span{font-size:13px;color:rgba(255,255,255,.62);margin-right:6px;white-space:nowrap}
+.as label{cursor:pointer;flex:1}
+.as input{position:absolute;opacity:0;pointer-events:none}
+.as b{display:block;text-align:center;font-weight:400;font-size:14px;color:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 0;transition:all .15s}
+.as label:hover b{border-color:rgba(255,255,255,.5)}
+.as input:checked+b{background:var(--champagne);border-color:var(--champagne);color:var(--espresso);font-weight:500}
+.as input:focus-visible+b{outline:2px solid var(--champagne);outline-offset:2px}
+.ea-row{display:flex;gap:8px}
+.ea input[type=email]{flex:1;min-width:0;background:none;border:0;outline:0;color:#fff;font:400 16px var(--sans);padding:0 12px}
 .ea input[type=email]::placeholder{color:rgba(255,255,255,.55)}
 .ea button{flex:none;display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#fff;border:0;border-radius:999px;
   font:500 15px var(--sans);letter-spacing:.2px;padding:14px 26px;cursor:pointer;box-shadow:0 12px 32px -10px rgba(200,148,26,.6);transition:transform .2s var(--ease),opacity .2s}
 .ea button:hover{transform:translateY(-1px)}
 .ea button[disabled]{opacity:.6;cursor:default;transform:none}
 .ea button svg{width:16px;height:16px}
-.as{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
-.as span{font-size:13px;color:rgba(255,255,255,.62);margin-right:4px}
-.as label{cursor:pointer}
-.as input{position:absolute;opacity:0;pointer-events:none}
-.as b{display:inline-block;font-weight:400;font-size:13px;color:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 14px;transition:all .15s}
-.as input:checked+b{background:var(--champagne);border-color:var(--champagne);color:var(--espresso);font-weight:500}
-.as input:focus-visible+b{outline:2px solid var(--champagne);outline-offset:2px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .msg{min-height:20px;margin-top:12px;font-size:13.5px;color:rgba(255,255,255,.7)}
 .msg.err{color:#F2B8A0}
-.done{display:none;margin-top:34px;max-width:520px;border:1px solid rgba(229,193,88,.5);background:rgba(20,15,9,.5);border-radius:18px;padding:20px 24px;
+.done{display:none;margin-top:34px;max-width:560px;border:1px solid rgba(229,193,88,.5);background:rgba(20,15,9,.5);border-radius:18px;padding:20px 24px;
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .done b{display:block;font-family:var(--serif);font-weight:500;font-size:28px;color:var(--cream)}
 .done b em{color:var(--champagne)}
@@ -83,8 +85,10 @@ h1 em{font-style:italic;color:var(--champagne)}
   .inner{padding-bottom:84px}
   .mast .ln{width:28px}
   .mast .lbl{font-size:9.5px;letter-spacing:2px}
-  .ea-row{flex-direction:column;border-radius:18px;padding:6px;gap:6px}
-  .ea input[type=email]{padding:14px 14px}
+  .as{padding-left:6px}
+  .as span{margin-right:2px}
+  .ea-row{flex-direction:column;gap:6px}
+  .ea input[type=email]{padding:14px 10px}
   .ea button{justify-content:center;width:100%}
   .legal{left:22px;right:auto}
 }
@@ -112,17 +116,19 @@ h1 em{font-style:italic;color:var(--champagne)}
     <p class="sub">From the first invitation to the last photo, every part of your event in one beautiful place.</p>
 
     <form class="ea" id="ea" novalidate>
-      <div class="ea-row">
-        <input type="email" name="email" id="email" placeholder="Your email" autocomplete="email" required aria-label="Email">
-        <button type="submit" id="go">Request early access
-          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-      <div class="as" role="radiogroup" aria-label="I'm a">
-        <span>I'm a</span>
-        <label><input type="radio" name="role" value="host"><b>Host</b></label>
-        <label><input type="radio" name="role" value="planner"><b>Planner</b></label>
-        <label><input type="radio" name="role" value="vendor"><b>Vendor</b></label>
+      <div class="ea-box">
+        <div class="as" role="radiogroup" aria-label="I'm a">
+          <span>I'm a</span>
+          <label><input type="radio" name="role" value="host"><b>Host</b></label>
+          <label><input type="radio" name="role" value="planner"><b>Planner</b></label>
+          <label><input type="radio" name="role" value="vendor"><b>Vendor</b></label>
+        </div>
+        <div class="ea-row">
+          <input type="email" name="email" id="email" placeholder="Your email" autocomplete="email" required aria-label="Email">
+          <button type="submit" id="go">Request early access
+            <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
       </div>
       <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="msg" id="msg" role="status" aria-live="polite"></div>
