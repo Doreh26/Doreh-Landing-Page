@@ -125,6 +125,10 @@ h1 em{font-style:italic;color:var(--champagne)}
 .again{display:inline-block;margin-top:28px;color:var(--champagne);font-size:15px;border-bottom:1px solid rgba(229,193,88,.5);padding-bottom:3px}
 .more .legal{position:static;margin-top:clamp(64px,10vh,100px);justify-content:flex-start;align-items:center}
 .more .legal span{margin-left:auto}
+.about{margin-top:22px;max-width:760px;font-size:17px;line-height:1.6;color:rgba(255,255,255,.72)}
+.co{font-style:normal;font-size:12px;line-height:1.7;color:rgba(255,255,255,.5)}
+.co a{color:inherit}
+.more .co{max-width:1320px;margin:16px auto 0;padding:0 clamp(22px,4vw,56px)}
 @media (max-width:900px){.cols{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}}
 @media (max-width:520px){.cols{grid-template-columns:1fr}.more .legal span{margin-left:0}.more .legal{flex-wrap:wrap}}
 
@@ -219,6 +223,7 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
 <section class="more" aria-labelledby="more-h">
   <div class="more-in">
     <h2 id="more-h">One home for <em>every event.</em></h2>
+    <p class="about">Doreh is an event invitation and RSVP service. Hosts design digital invitations, send them to their guests by text or email, collect RSVPs, and keep their gifts and photos in one place.</p>
     <div class="cols">
       <div><h3>Invitations</h3><p>Digital invitations designed for your event, sent by text or email.</p></div>
       <div><h3>RSVPs &amp; guests</h3><p>Replies, plus-ones and your guest list, always up to date.</p></div>
@@ -229,6 +234,7 @@ textarea.f{resize:vertical;min-height:110px;line-height:1.5}
     <a class="again" href="#hero" data-top>Request early access</a>
   </div>
   <nav class="legal"><a href="/privacy" data-open="legal" data-tab="privacy">Privacy &amp; Terms</a><a href="/contact" data-open="contact">Contact</a><span>© Doreh, Inc.</span></nav>
+  <footer><address class="co">Doreh, Inc.<br>8549 Wilshire Blvd. #2181<br>Beverly Hills, CA 90212<br><a href="mailto:support@doreh.com">support@doreh.com</a></address></footer>
 </section>
 
 <dialog id="legal" aria-label="Privacy and Terms">
