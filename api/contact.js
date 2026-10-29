@@ -14,6 +14,31 @@ function json(body, status = 200) {
 }
 const clip = (v, n) => String(v || '').trim().slice(0, n);
 
+// Email the team about each saved message (Resend). The message is already stored,
+// so a failed or unconfigured alert is logged and never fails the request.
+async function alertTeam({ name, email, subject, message, at, path }) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) { console.warn('contact alert skipped: RESEND_API_KEY not set'); return; }
+  const deletion = subject === 'Account deletion request';
+  const test = process.env.VERCEL_ENV !== 'production' ? '[test] ' : '';
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: process.env.CONTACT_MAIL_FROM || 'Doreh <no-reply@doreh.com>',
+        to: (process.env.CONTACT_ALERT_TO || 'pouya@doreh.com').split(',').map(s => s.trim()),
+        reply_to: email,
+        subject: test + (deletion ? 'Account deletion request (reply within 30 days)' : 'doreh.com message: ' + subject),
+        text: `From: ${name} <${email}>\nSubject: ${subject}\nAt: ${at}\nSaved as: ${path}\n\n${message}`,
+      }),
+    });
+    if (!r.ok) console.error('contact alert failed', { status: r.status });
+  } catch (err) {
+    console.error('contact alert failed', { error: err?.message });
+  }
+}
+
 export async function POST(request) {
   if (!sameSite(request)) return json({ error: 'Send this from doreh.com.' }, 403);
   const text = await request.text();
@@ -44,6 +69,7 @@ export async function POST(request) {
       name, email, subject, message, at,
       country: request.headers.get('x-vercel-ip-country') || '',
     }), { access: 'private', contentType: 'application/json', addRandomSuffix: false, allowOverwrite: false });
+    await alertTeam({ name, email, subject, message, at, path });
     return json({ ok: true });
   } catch (err) {
     console.error('contact failed', { error: err?.message });
