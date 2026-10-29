@@ -27,7 +27,7 @@ async function alertTeam({ name, email, subject, message, at, path }) {
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: process.env.CONTACT_MAIL_FROM || 'Doreh <no-reply@doreh.com>',
-        to: (process.env.CONTACT_ALERT_TO || 'pouya@doreh.com').split(',').map(s => s.trim()),
+        to: (process.env.CONTACT_ALERT_TO || 'support@doreh.com').split(',').map(s => s.trim()),
         reply_to: email,
         subject: test + (deletion ? 'Account deletion request (reply within 30 days)' : 'doreh.com message: ' + subject),
         text: `From: ${name} <${email}>\nSubject: ${subject}\nAt: ${at}\nSaved as: ${path}\n\n${message}`,
