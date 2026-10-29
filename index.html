@@ -103,6 +103,15 @@ h1 em{font-style:italic;color:var(--champagne)}
 .legal a:hover{color:#fff}
 
 @media (max-width:640px){
+  /* a phone shows about a quarter of each wide photo: aim it at the faces, all right of center */
+  .bg:nth-child(1){background-position:70% 30%}
+  .bg:nth-child(2){background-position:84% 30%}
+  .bg:nth-child(3){background-position:84% 30%}
+  .bg:nth-child(4){background-position:70% 30%}
+  .bg:nth-child(5){background-position:70% 30%}
+  .bg:nth-child(6){background-position:78% 30%}
+  /* no side shade on a phone; keep the photo clear on top, dark under the text */
+  .scrim{background:linear-gradient(0deg,rgba(20,15,9,.9),rgba(20,15,9,.72) 45%,rgba(20,15,9,.1) 72%,rgba(20,15,9,.2))}
   .inner{padding-bottom:84px}
   .mast .ln{width:28px}
   .mast .lbl{font-size:9.5px;letter-spacing:2px}
