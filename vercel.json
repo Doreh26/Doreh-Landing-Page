@@ -30,8 +30,8 @@
   ],
   "redirects": [
     {
-      "source": "/r/:path*",
-      "destination": "/sms",
+      "source": "/r/:code((?!demo$).*)",
+      "destination": "/r/demo",
       "permanent": false
     },
     {
