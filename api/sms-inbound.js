@@ -1,12 +1,15 @@
 // Incoming texts to the Doreh number (Telnyx messaging profile webhook). The number is text-out only:
 // STOP/HELP/START are answered by Telnyx's keyword replies and skipped here; any other text gets one fixed
 // reply pointing to phone and email support, at most once per sender per day. Message bodies are not stored.
-// Env: TELNYX_PUBLIC_KEY (Telnyx portal → Keys & Credentials → Public Key), TELNYX_API_KEY.
+// On the short code only, JOIN opts the sender in to Doreh event texts: we keep the number with the consent wording and
+// send the keyword confirmation (the wording filed with the carriers).
+// Env: TELNYX_PUBLIC_KEY (Telnyx portal → Keys & Credentials → Public Key), TELNYX_API_KEY, SHORT_CODE (once live).
 import { put } from '@vercel/blob';
-import { createHash, createPublicKey, verify } from 'node:crypto';
+import { createHash, createPublicKey, randomBytes, verify } from 'node:crypto';
 
 const KEYWORDS = new Set(['STOP', 'STOPALL', 'UNSUBSCRIBE', 'CANCEL', 'END', 'QUIT', 'HELP', 'INFO', 'START', 'UNSTOP']);
 const REPLY = 'Doreh: This number does not accept text messages. For help, call +1 424 550 5566 or email support@doreh.com. Reply STOP to opt out.';
+const JOINED = "Doreh: You're signed up for Doreh event texts. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel.";
 const MAX_SKEW_SECONDS = 300;
 
 const ok = () => new Response(null, { status: 200 });
@@ -46,17 +49,35 @@ export async function POST(request) {
   const from = msg.from?.phone_number, ours = msg.to?.[0]?.phone_number;
   const word = String(msg.text || '').trim().toUpperCase();
   if (!from || !ours || KEYWORDS.has(word)) return ok();
+  if (word === 'JOIN' && process.env.SHORT_CODE && ours === process.env.SHORT_CODE) {
+    await joined(from).catch((err) => console.error('sms-inbound join save failed', { error: err?.message }));
+    await send(ours, from, JOINED);
+    return ok();
+  }
   if (!(await firstToday(from))) return ok();
 
+  await send(ours, from, REPLY);
+  return ok(); // always 200 so Telnyx doesn't retry
+}
+
+async function send(from, to, text) {
   try {
     const r = await fetch('https://api.telnyx.com/v2/messages', {
       method: 'POST',
       headers: { authorization: 'Bearer ' + process.env.TELNYX_API_KEY, 'content-type': 'application/json' },
-      body: JSON.stringify({ from: ours, to: from, text: REPLY }),
+      body: JSON.stringify({ from, to, text }),
     });
     if (!r.ok) console.error('sms-inbound reply failed', { status: r.status, body: (await r.text()).slice(0, 300) });
   } catch (err) {
     console.error('sms-inbound reply failed', { error: err?.message });
   }
-  return ok(); // always 200 so Telnyx doesn't retry
+}
+
+// keyword opt-in record, same shape as api/sms-optin.js
+async function joined(phone) {
+  const at = new Date().toISOString();
+  const prefix = process.env.VERCEL_ENV === 'production' ? 'sms-optin/' : 'sms-optin-test/';
+  await put(prefix + at.replace(/[:.]/g, '-') + '-' + randomBytes(4).toString('hex') + '.json', JSON.stringify({
+    phone, program: 'events', source: 'keyword_join', consent: 'Texted JOIN to ' + process.env.SHORT_CODE + '. Reply: ' + JOINED, at,
+  }), { access: 'private', contentType: 'application/json', addRandomSuffix: false, allowOverwrite: false });
 }

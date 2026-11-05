@@ -1,12 +1,16 @@
-// RSVPs from the sample invitation at doreh.com/r/demo, the opt-in carriers review for the Doreh texting program.
-// A guest may add their own mobile number and tick "Text me updates"; only then do we keep the number, with the exact
-// consent text they saw, and send one confirmation text. One private Blob per opt-in: sms-optin/<time>-<random>.json
+// RSVPs from the sample invitations carriers review:
+// - doreh.com/r/demo (10DLC, per-event): a guest may add their own number and tick "Text me updates"; only then do we keep
+//   the number, with the exact consent text they saw, and send one confirmation text.
+// - doreh.com/invite/demo (short code, program 'events'): the guest's number is their account; ticking the box opts them in
+//   to texts for all their Doreh events. No text is sent until the short code is live.
+// One private Blob per opt-in: sms-optin/<time>-<random>.json
 // Env: TELNYX_API_KEY, CALL_FROM (defaults to the Doreh number).
 import { put } from '@vercel/blob';
 import { createHash, randomBytes } from 'node:crypto';
 import { sameSite, looksLikeSpam, overLimit } from './_guard.js';
 
 const CONSENT = 'By checking this box, you agree to receive text messages from Doreh about this event on behalf of the host: your RSVP confirmation, reminders, day-of updates and a thank-you note. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to opt out. Consent is not required to RSVP. Privacy: doreh.com/privacy. Terms: doreh.com/terms.';
+const CONSENT_EVENTS = 'Text me invitations and updates for my Doreh events. By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. Terms: doreh.com/terms#sms Privacy: doreh.com/privacy';
 const CONFIRM = "Doreh: You're signed up for texts about Emily & David's wedding. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to opt out. Privacy: doreh.com/privacy";
 
 function json(body, status = 200) {
@@ -46,6 +50,7 @@ export async function POST(request) {
   if (!name) return json({ error: 'Enter your name.' }, 400);
   if (!attending) return json({ error: 'Choose whether you can come.' }, 400);
 
+  const events = body.program === 'events';
   const optIn = body.optIn === true;
   const raw = String(body.phone || '').trim();
   if (!optIn) return json({ ok: true, texts: false }); // a plain RSVP: no number is kept
@@ -57,8 +62,8 @@ export async function POST(request) {
   try {
     if (await overLimit(request, 'sms-optin', 10)) return json({ error: 'Too many tries. Try again in an hour.' }, 429);
     await put(prefix + at.replace(/[:.]/g, '-') + '-' + randomBytes(4).toString('hex') + '.json', JSON.stringify({
-      phone, name, attending, event: 'demo', consent: CONSENT, at,
-      page: 'https://doreh.com/r/demo',
+      phone, name, attending, event: 'demo', program: events ? 'events' : 'event', consent: events ? CONSENT_EVENTS : CONSENT, at,
+      page: events ? 'https://doreh.com/invite/demo' : 'https://doreh.com/r/demo',
       country: request.headers.get('x-vercel-ip-country') || '',
       userAgent: (request.headers.get('user-agent') || '').slice(0, 300),
     }), { access: 'private', contentType: 'application/json', addRandomSuffix: false, allowOverwrite: false });
@@ -68,7 +73,7 @@ export async function POST(request) {
   }
 
   // the opt-in is recorded either way; a failed confirmation text only gets logged
-  if (process.env.TELNYX_API_KEY && await firstToday(phone, prefix)) {
+  if (!events && process.env.TELNYX_API_KEY && await firstToday(phone, prefix)) {
     try {
       const r = await fetch('https://api.telnyx.com/v2/messages', {
         method: 'POST',
