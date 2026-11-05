@@ -8,7 +8,7 @@ import { put } from '@vercel/blob';
 import { createHash, createPublicKey, randomBytes, verify } from 'node:crypto';
 
 const KEYWORDS = new Set(['STOP', 'STOPALL', 'UNSUBSCRIBE', 'CANCEL', 'END', 'QUIT', 'HELP', 'INFO', 'START', 'UNSTOP']);
-const REPLY = 'Doreh: This number does not accept text messages. For help, call +1 424 550 5566 or email support@doreh.com. Reply STOP to opt out.';
+const REPLY = 'Doreh: This number does not accept text messages. For help, call +1 877 883 2626 or email support@doreh.com. Reply STOP to opt out.';
 const JOINED = "Doreh: You're signed up for Doreh event texts. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel.";
 const MAX_SKEW_SECONDS = 300;
 
