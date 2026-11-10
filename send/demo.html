@@ -2,7 +2,7 @@
 <title>Send Invitations · Doreh</title>
 <link rel="canonical" href="https://doreh.com/send/demo">
 <meta name="robots" content="noindex">
-<meta name="description" content="A sample of the screen a Doreh host uses to text invitations: each guest selected one at a time, consent confirmed, sent on the host's behalf.">
+<meta name="description" content="An example of the screen a Doreh host uses to text invitations: each guest selected one at a time, consent confirmed, sent on the host's behalf.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="/favicon.ico">
@@ -46,7 +46,7 @@ button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line
 footer{margin-top:36px;font-size:12.5px;color:var(--ink-2)}
 footer a{color:inherit}
 </style></head><body><div class="wrap" id="main">
-  <div class="sample">Sample host screen. No texts are sent. See <a href="/sms">how Doreh texts work</a>.</div>
+  <div class="sample">Example host screen. No texts are sent. See <a href="/sms">how Doreh texts work</a>.</div>
   <h1>Send invitations</h1>
   <p class="when">Emily &amp; David's wedding · Sat Jun 13</p>
 
@@ -114,7 +114,7 @@ footer a{color:inherit}
   });
   document.getElementById('back').addEventListener('click',function(){main.classList.remove('asking')});
   document.getElementById('send').addEventListener('click',function(){
-    document.getElementById('doneText').textContent='This is a sample, so no texts were sent. In Doreh, '+plural(picked())+' would go out now.';
+    document.getElementById('doneText').textContent='This is an example, so no texts were sent. In Doreh, '+plural(picked())+' would go out now.';
     main.classList.remove('asking');main.classList.add('sent');
   });
 })();

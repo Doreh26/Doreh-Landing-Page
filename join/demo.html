@@ -2,7 +2,7 @@
 <title>Join the Guest List · Doreh</title>
 <link rel="canonical" href="https://doreh.com/join/demo">
 <meta name="robots" content="noindex">
-<meta name="description" content="A sample Doreh guest list link. Add yourself to the host's guest list with your own number, and choose whether to get Doreh texts.">
+<meta name="description" content="An example Doreh guest list link. Add yourself to the host's guest list with your own number, and choose whether to get Doreh texts.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Doreh">
 <meta property="og:url" content="https://doreh.com/join/demo">
@@ -56,7 +56,7 @@ footer a{color:inherit}
 .notice{font-size:13px;color:var(--ink-2);margin:8px 0 0;line-height:1.5}
 .notice a{color:var(--gold)}
 </style></head><body><div class="wrap" id="main">
-  <div class="sample">Sample guest list link. No texts are sent. See <a href="/sms">how Doreh texts work</a>.</div>
+  <div class="sample">Example guest list link. No texts are sent. See <a href="/sms">how Doreh texts work</a>.</div>
 
   <img class="hero" src="/assets/hero-wedding.jpg" alt="">
   <h1>Emily Carter &amp; David Brooks</h1>
@@ -95,7 +95,7 @@ footer a{color:inherit}
   </form>
 
   <div class="done" role="status">
-    <h2>Sample complete</h2>
+    <h2>Example complete</h2>
     <p id="doneText"></p>
   </div>
 
@@ -120,20 +120,20 @@ footer a{color:inherit}
     msg.textContent='';
     if(!el.name.value.trim())return msg.textContent='Enter your name.';
     if(!/^[2-9]\d{2}[2-9]\d{6}$/.test(digits(el.phone.value)))return msg.textContent='Enter a US mobile number.';
-    document.getElementById('codeHint').textContent='This is a sample, so no text is sent. Enter 00000.';
+    document.getElementById('codeHint').textContent='This is an example, so no text is sent. Enter 00000.';
     document.getElementById('main').classList.add('coded');
     el.code.focus();
   });
   document.getElementById('callCode').addEventListener('click',function(e){
     e.preventDefault();
-    document.getElementById('codeHint').textContent='This is a sample, so no call is placed. Enter 00000.';
+    document.getElementById('codeHint').textContent='This is an example, so no call is placed. Enter 00000.';
     el.code.focus();
   });
   el.addEventListener('submit',function(e){
     e.preventDefault();msg.textContent='';
     if(!document.getElementById('main').classList.contains('coded'))return;
-    if(el.code.value.trim()!=='00000')return msg.textContent='That code doesn’t match. On this sample, use 00000.';
-    document.getElementById('doneText').textContent='Sample only. Nothing was saved and no texts were sent.';
+    if(el.code.value.trim()!=='00000')return msg.textContent='That code doesn’t match. On this example, use 00000.';
+    document.getElementById('doneText').textContent='Example only. Nothing was saved and no texts were sent.';
     document.getElementById('main').classList.add('sent');
   });
 })();
