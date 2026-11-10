@@ -58,12 +58,11 @@ footer a{color:inherit}
     </div>
 
     <div class="card">
-      <h2>Guests <small id="count">0 selected</small></h2>
+      <h2>Guests <small><a href="#" id="all">Select all</a> · <span id="count">0 selected</span></small></h2>
       <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">Michael Reed<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
       <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">Sarah Kim<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
       <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">James &amp; Olivia Turner<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
       <label class="guest"><input type="checkbox" class="g" data-src="host" id="gGrace"><span class="n">Grace Miller<span class="tag">Added by you</span></span><span class="p">(818) 555-0116 · grace@example.com</span></label>
-      <label class="consent hidden attest" id="attestGrace"><input type="checkbox" class="ok" data-for="gGrace"><span>Grace agreed to get my invitation by text.</span></label>
       <label class="guest off"><input type="checkbox" disabled><span class="n">Daniel Hayes</span><span class="p">Opted out of texts</span></label>
     </div>
 
@@ -73,6 +72,7 @@ footer a{color:inherit}
     </div>
 
     <div class="card">
+      <label class="consent hidden" id="agreeRow"><input type="checkbox" id="agree"><span>Everyone I added by hand agreed to get my invitation by text. <span id="hostN"></span></span></label>
       <p class="fine">Doreh texts one invitation per guest on your behalf, under your name. Further texts go only to guests who sign up. Invitation texts use Doreh’s wording; you can’t add links or ads. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
       <button type="button" id="next" disabled>Review and send</button>
     </div>
@@ -97,13 +97,15 @@ footer a{color:inherit}
   var main=document.getElementById('main'),boxes=[].slice.call(document.querySelectorAll('.g')),
       next=document.getElementById('next'),count=document.getElementById('count');
   function picked(){return boxes.filter(function(b){return b.checked}).length}
-  function attested(b){var a=document.querySelector('.ok[data-for="'+b.id+'"]');return a&&a.checked}
-  function hostOk(){return boxes.every(function(b){return !(b.checked&&b.dataset.src==='host')||attested(b)})}
+  var agree=document.getElementById('agree');
+  function hostN(){return boxes.filter(function(b){return b.checked&&b.dataset.src==='host'}).length}
   function plural(n){return n+' invitation'+(n===1?'':'s')}
-  function update(){var n=picked();count.textContent=n+' selected';
-    boxes.forEach(function(b){var a=document.getElementById('attest'+b.id.slice(1));if(a)a.classList.toggle('hidden',!b.checked)});
-    next.disabled=!(n&&hostOk())}
-  [].slice.call(document.querySelectorAll('.ok')).forEach(function(a){a.addEventListener('change',update)});
+  function update(){var n=picked(),h=hostN();count.textContent=n+' selected';
+    document.getElementById('agreeRow').classList.toggle('hidden',!h);
+    document.getElementById('hostN').textContent='('+h+' guest'+(h===1?'':'s')+')';
+    next.disabled=!(n&&(!h||agree.checked))}
+  agree.addEventListener('change',update);
+  document.getElementById('all').addEventListener('click',function(e){e.preventDefault();boxes.forEach(function(b){b.checked=true});update()});
   document.getElementById('copy').addEventListener('click',function(){
     var b=this;try{navigator.clipboard.writeText('https://doreh.com/join/demo')}catch(e){}
     b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1500)});
