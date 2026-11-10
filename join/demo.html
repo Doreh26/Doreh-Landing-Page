@@ -29,7 +29,7 @@ h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:40px
 form,.done{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
 h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:26px;margin:0 0 14px}
 label.f{display:block;font-size:14px;font-weight:500;margin:14px 0 6px}
-input[type=text],input[type=tel]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+input[type=text],input[type=tel],input[type=email]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .choice{display:flex;gap:10px}
 .choice label{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-weight:400}
 .choice input{margin-right:6px}
@@ -55,7 +55,10 @@ button:disabled{opacity:.6}
 footer{margin-top:36px;font-size:12.5px;color:var(--ink-2)}
 footer a{color:inherit}
 
-.person{display:flex;gap:8px;margin-top:8px}
+.person{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.person:first-child{border-top:0;padding-top:0}
+.person .nm{flex:1 1 55%;min-width:0}
+.person .em{flex:1 1 55%;min-width:0}
 .person input{flex:1}
 .person select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 8px}
 .add{display:inline-block;margin-top:10px;font-size:14px;color:var(--gold);cursor:pointer;background:none;border:0;padding:0;width:auto;font-weight:500}
@@ -118,11 +121,13 @@ footer a{color:inherit}
     document.getElementById('partyHint').textContent=n<MAX?'Up to '+(MAX-n)+' more':'Party full'}
   document.getElementById('addPerson').addEventListener('click',function(){
     var r=document.createElement('div');r.className='person';
-    r.innerHTML='<input type="text" placeholder="Name" aria-label="Name"><select aria-label="Age range">'+
-      AGES.map(function(a){return '<option>'+a+'</option>'}).join('')+'</select><button type="button" class="share">Share link</button>';
-    var sel=r.querySelector('select'),sh=r.querySelector('.share');
-    sel.addEventListener('change',function(){sh.style.display=sel.value==='Child'?'none':''});
-    sh.addEventListener('click',function(){var u='https://doreh.com/join/demo';
+    r.innerHTML='<input type="text" class="nm" placeholder="Name" aria-label="Name"><select aria-label="Age range">'+
+      AGES.map(function(a){return '<option>'+a+'</option>'}).join('')+'</select>'+
+      '<input type="email" class="em" placeholder="Email (optional)" aria-label="Email"><button type="button" class="share">Share link</button>';
+    var sel=r.querySelector('select'),sh=r.querySelector('.share'),em=r.querySelector('.em');
+    sel.addEventListener('change',function(){var kid=sel.value==='Child';sh.style.display=kid?'none':'';em.style.display=kid?'none':'';
+      em.placeholder=sel.value==='Youth'?'Email (13+)':'Email (optional)';if(kid)em.value=''});
+    sh.addEventListener('click',function(){var u='https://doreh.com/claim/S4r7k';
       if(navigator.share){navigator.share({title:'Emily & David’s guest list',url:u}).catch(function(){})}
       else{try{navigator.clipboard.writeText(u)}catch(e){}sh.textContent='Copied';setTimeout(function(){sh.textContent='Share link'},1500)}});
     party.appendChild(r);refresh();r.querySelector('input').focus();
@@ -151,6 +156,8 @@ footer a{color:inherit}
   el.addEventListener('submit',function(e){
     e.preventDefault();msg.textContent='';
     if(!document.getElementById('main').classList.contains('verified'))return msg.textContent='Verify your number first.';
+    var bad=rows().some(function(r){var v=r.querySelector('.em').value.trim();return v&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)});
+    if(bad)return msg.textContent='Check the email addresses.';
     document.getElementById('doneText').textContent='Example only. Nothing was saved and no texts were sent.';
     document.getElementById('main').classList.add('sent');
   });
