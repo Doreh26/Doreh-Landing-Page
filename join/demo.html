@@ -58,7 +58,10 @@ footer a{color:inherit}
 .person{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
 .person:first-child{border-top:0;padding-top:0}
 .person .nm{flex:1 1 55%;min-width:0}
-.person .em{flex:1 1 55%;min-width:0}
+.person .em,.person .ph{flex:1 1 40%;min-width:0}
+.person .ok{flex:1 1 100%;margin:0;font-size:14px;justify-content:flex-start}
+.person .ok input{flex:none;width:18px;height:18px}
+.person .ok.hidden{display:none}
 .person input{flex:1}
 .person select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 8px}
 .add{display:inline-block;margin-top:10px;font-size:14px;color:var(--gold);cursor:pointer;background:none;border:0;padding:0;width:auto;font-weight:500}
@@ -123,10 +126,16 @@ footer a{color:inherit}
     var r=document.createElement('div');r.className='person';
     r.innerHTML='<input type="text" class="nm" placeholder="Name" aria-label="Name"><select aria-label="Age range">'+
       AGES.map(function(a){return '<option>'+a+'</option>'}).join('')+'</select>'+
-      '<input type="email" class="em" placeholder="Email (optional)" aria-label="Email"><button type="button" class="share">Share link</button>';
-    var sel=r.querySelector('select'),sh=r.querySelector('.share'),em=r.querySelector('.em');
-    sel.addEventListener('change',function(){var kid=sel.value==='Child';sh.style.display=kid?'none':'';em.style.display=kid?'none':'';
-      em.placeholder=sel.value==='Youth'?'Email (13+)':'Email (optional)';if(kid)em.value=''});
+      '<input type="tel" class="ph" placeholder="Mobile (optional)" aria-label="Mobile number" inputmode="tel">'+
+      '<input type="email" class="em" placeholder="Email (optional)" aria-label="Email"><button type="button" class="share">Share link</button>'+
+      '<label class="consent ok hidden"><input type="checkbox" class="agree"><span class="agreeText">They agreed to get this invitation by text.</span></label>';
+    var sel=r.querySelector('select'),sh=r.querySelector('.share'),em=r.querySelector('.em'),ph=r.querySelector('.ph'),ok=r.querySelector('.ok'),nm=r.querySelector('.nm');
+    function sync(){var kid=sel.value==='Child';[sh,em,ph].forEach(function(x){x.style.display=kid?'none':''});
+      if(kid){em.value='';ph.value=''}
+      em.placeholder=sel.value==='Youth'?'Email (13+)':'Email (optional)';ph.placeholder=sel.value==='Youth'?'Mobile (13+)':'Mobile (optional)';
+      ok.classList.toggle('hidden',!ph.value.trim());
+      r.querySelector('.agreeText').textContent=(nm.value.trim()||'They')+' agreed to get this invitation by text.'}
+    sel.addEventListener('change',sync);ph.addEventListener('input',sync);nm.addEventListener('input',sync);
     sh.addEventListener('click',function(){var u='https://doreh.com/claim/S4r7k';
       if(navigator.share){navigator.share({title:'Emily & David’s guest list',url:u}).catch(function(){})}
       else{try{navigator.clipboard.writeText(u)}catch(e){}sh.textContent='Copied';setTimeout(function(){sh.textContent='Share link'},1500)}});
@@ -158,6 +167,10 @@ footer a{color:inherit}
     if(!document.getElementById('main').classList.contains('verified'))return msg.textContent='Verify your number first.';
     var bad=rows().some(function(r){var v=r.querySelector('.em').value.trim();return v&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)});
     if(bad)return msg.textContent='Check the email addresses.';
+    var badPh=rows().some(function(r){var v=r.querySelector('.ph').value.trim();return v&&!/^[2-9]\d{2}[2-9]\d{6}$/.test(digits(v))});
+    if(badPh)return msg.textContent='Check the mobile numbers.';
+    var noOk=rows().some(function(r){return r.querySelector('.ph').value.trim()&&!r.querySelector('.agree').checked});
+    if(noOk)return msg.textContent='Confirm each person agreed to get the invitation by text.';
     document.getElementById('doneText').textContent='Example only. Nothing was saved and no texts were sent.';
     document.getElementById('main').classList.add('sent');
   });
