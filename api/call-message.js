@@ -13,6 +13,11 @@ function json(body, status = 200) {
   });
 }
 const clip = (v, n) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
+// +13105292951 -> (310) 529-2951; anything else is left as given
+function usPhone(v) {
+  const d = v.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+  return d.length === 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : v;
+}
 
 function authorized(request) {
   const want = process.env.CALL_MESSAGE_SECRET || '';
@@ -41,16 +46,30 @@ export async function POST(request) {
 
   const name = clip(body.caller_name, 120);
   const number = clip(body.callback_number, 40);
-  const message = clip(body.message, 1500);
+  let company = clip(body.company, 120);
+  let message = clip(body.message, 1500);
+  // the assistant writes "Company: reason. Details" when it has no company field; split it out
+  const lead = !company && message.match(/^([^:]{2,60}):\s+(.+)$/);
+  if (lead) { company = lead[1]; message = lead[2]; }
+  if (message) message = message[0].toUpperCase() + message.slice(1);
   if (!message && !number) return json({ error: 'message or callback_number is required' }, 400);
 
   const at = new Date().toISOString();
   const prefix = process.env.VERCEL_ENV === 'production' ? 'calls/' : 'calls-test/';
   const path = prefix + at.replace(/[:.]/g, '-') + '-' + randomBytes(4).toString('hex') + '.json';
-  const text = 'Doreh call message\n' + (name || 'No name') + ', ' + (number || 'no number') + '\n' + (message || '(no message)').slice(0, 600);
+  const when = new Date(at).toLocaleString('en-US', { timeZone: 'America/Los_Angeles', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  const text = [
+    'New call message',
+    '',
+    'From: ' + (name || 'No name given'),
+    'Company: ' + (company || 'None given'),
+    'Call back: ' + (number ? usPhone(number) : 'No number given'),
+    'Time: ' + when,
+    'Message: ' + (message || '(no message)').slice(0, 600),
+  ].join('\n');
 
   const [saved, texted] = await Promise.allSettled([
-    put(path, JSON.stringify({ name, number, message, at }), { access: 'private', contentType: 'application/json', addRandomSuffix: false, allowOverwrite: false }),
+    put(path, JSON.stringify({ name, company, number, message, at }), { access: 'private', contentType: 'application/json', addRandomSuffix: false, allowOverwrite: false }),
     sendText(text),
   ]);
   if (saved.status === 'rejected') console.error('call-message save failed', { error: saved.reason?.message });
