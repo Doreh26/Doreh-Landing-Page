@@ -35,7 +35,13 @@ input[type=text],input[type=tel]{width:100%;font:inherit;color:var(--ink);backgr
 .choice input{margin-right:6px}
 .hint{font-size:13px;color:var(--ink-2);margin:6px 0 0}
 .hint a{color:var(--gold)}
-.step2{display:none}.coded .step2{display:block}.coded .step1btn{display:none}
+.row{display:flex;gap:8px;align-items:stretch}
+.row input{flex:1;min-width:0}
+.row button.inline{margin:0;width:auto;padding:10px 16px;white-space:nowrap}
+.codebox{display:none}.coded .codebox{display:block}
+.step2{display:none}.verified .step2{display:block}
+.verified #verify{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.person .share{margin:0;width:auto;padding:8px 12px;font-size:13px;background:transparent;color:var(--gold);border:1px solid var(--line);white-space:nowrap}
 .consent{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-weight:400;cursor:pointer}
 .consent input{width:18px;height:18px;margin-top:3px;flex:none}
 .fine{font-size:13px;color:var(--ink-2);margin:8px 0 0 28px;line-height:1.5}
@@ -73,15 +79,16 @@ footer a{color:inherit}
     <p class="hint" id="partyHint">Up to 2 more</p>
 
     <label class="f" for="phone">Mobile number</label>
-    <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(310) 555-0123">
+    <div class="row"><input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(310) 555-0123"><button type="button" class="inline" id="sendCode">Send code</button></div>
     <p class="notice">Doreh Event Texts: Doreh will text you Emily’s invitation to this event. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help. Support: support@doreh.com or 1-877-883-2626. Mobile carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
-    <button type="button" class="step1btn" id="sendCode">Send my code</button>
+    <div class="codebox">
+      <label class="f" for="code">5-digit code</label>
+      <div class="row"><input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="5"><button type="button" class="inline" id="verify">Verify</button></div>
+      <p class="hint" id="codeHint">We texted a code to your number.</p>
+      <p class="hint"><a href="#" id="callCode">Call me with the code instead</a></p>
+    </div>
 
     <div class="step2">
-      <label class="f" for="code">5-digit code</label>
-      <input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="5">
-      <p class="hint" id="codeHint">We texted a one-time code to your number.</p>
-      <p class="hint"><a href="#" id="callCode">Call me with the code instead</a></p>
 
       <label class="consent" for="optIn"><input type="checkbox" id="optIn" name="optIn"><span>Text me invitations and updates for my Doreh events</span></label>
       <p class="fine">Doreh Event Texts: By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP or join a guest list. Ages 13+; under 18 with a parent’s permission. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
@@ -112,7 +119,12 @@ footer a{color:inherit}
   document.getElementById('addPerson').addEventListener('click',function(){
     var r=document.createElement('div');r.className='person';
     r.innerHTML='<input type="text" placeholder="Name" aria-label="Name"><select aria-label="Age range">'+
-      AGES.map(function(a){return '<option>'+a+'</option>'}).join('')+'</select>';
+      AGES.map(function(a){return '<option>'+a+'</option>'}).join('')+'</select><button type="button" class="share">Share link</button>';
+    var sel=r.querySelector('select'),sh=r.querySelector('.share');
+    sel.addEventListener('change',function(){sh.style.display=sel.value==='Child'?'none':''});
+    sh.addEventListener('click',function(){var u='https://doreh.com/join/demo';
+      if(navigator.share){navigator.share({title:'Emily & David’s guest list',url:u}).catch(function(){})}
+      else{try{navigator.clipboard.writeText(u)}catch(e){}sh.textContent='Copied';setTimeout(function(){sh.textContent='Share link'},1500)}});
     party.appendChild(r);refresh();r.querySelector('input').focus();
   });
   refresh();
@@ -121,7 +133,7 @@ footer a{color:inherit}
     if(!el.name.value.trim())return msg.textContent='Enter your name.';
     if(!/^[2-9]\d{2}[2-9]\d{6}$/.test(digits(el.phone.value)))return msg.textContent='Enter a US mobile number.';
     document.getElementById('codeHint').textContent='This is an example, so no text is sent. Enter 00000.';
-    document.getElementById('main').classList.add('coded');
+    document.getElementById('main').classList.add('coded');this.textContent='Resend';
     el.code.focus();
   });
   document.getElementById('callCode').addEventListener('click',function(e){
@@ -129,10 +141,16 @@ footer a{color:inherit}
     document.getElementById('codeHint').textContent='This is an example, so no call is placed. Enter 00000.';
     el.code.focus();
   });
+  document.getElementById('verify').addEventListener('click',function(){
+    msg.textContent='';
+    if(el.code.value.trim()!=='00000')return msg.textContent='That code doesn’t match. On this example, use 00000.';
+    document.getElementById('main').classList.add('verified');
+    this.textContent='Verified ✓';this.disabled=true;el.code.readOnly=true;el.phone.readOnly=true;
+    document.getElementById('sendCode').disabled=true;
+  });
   el.addEventListener('submit',function(e){
     e.preventDefault();msg.textContent='';
-    if(!document.getElementById('main').classList.contains('coded'))return;
-    if(el.code.value.trim()!=='00000')return msg.textContent='That code doesn’t match. On this example, use 00000.';
+    if(!document.getElementById('main').classList.contains('verified'))return msg.textContent='Verify your number first.';
     document.getElementById('doneText').textContent='Example only. Nothing was saved and no texts were sent.';
     document.getElementById('main').classList.add('sent');
   });
