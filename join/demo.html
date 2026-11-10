@@ -79,12 +79,7 @@ footer a{color:inherit}
     <label class="f" for="name">Your name</label>
     <input type="text" id="name" name="name" autocomplete="name" required>
 
-    <label class="f">Who’s with you</label>
-    <div id="party"></div>
-    <button type="button" class="add" id="addPerson">+ Add someone</button>
-    <p class="hint" id="partyHint">Up to 2 more</p>
-
-    <label class="f" for="phone">Mobile number</label>
+    <label class="f" for="phone">Your mobile number</label>
     <div class="row"><input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(310) 555-0123"><button type="button" class="inline" id="sendCode">Send code</button></div>
     <p class="notice">Doreh Event Texts: Doreh will text you Emily’s invitation to this event. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help. Support: support@doreh.com or 1-877-883-2626. Mobile carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
     <div class="codebox">
@@ -95,6 +90,11 @@ footer a{color:inherit}
     </div>
 
     <div class="step2">
+      <label class="f">Who’s with you</label>
+      <div id="party"></div>
+      <button type="button" class="add" id="addPerson">+ Add someone</button>
+      <p class="hint" id="partyHint">Up to 2 more</p>
+
 
       <label class="consent" for="optIn"><input type="checkbox" id="optIn" name="optIn"><span>Text me invitations and updates for my Doreh events</span></label>
       <p class="fine">Doreh Event Texts: By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP or join a guest list. Ages 13+; under 18 with a parent’s permission. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
