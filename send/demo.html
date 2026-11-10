@@ -25,6 +25,12 @@ h2 small{font-family:'Outfit',system-ui,sans-serif;font-size:13px;font-weight:40
 .guest .n{flex:1}
 .guest .p{font-size:13.5px;color:var(--ink-2);white-space:nowrap}
 .guest.off{cursor:default;opacity:.55}
+.tag{font-size:11.5px;font-weight:500;border-radius:999px;padding:1px 8px;margin-left:6px;white-space:nowrap;border:1px solid var(--line);color:var(--ink-2)}
+.tag.self{border-color:var(--gold);color:var(--gold)}
+.link{display:flex;gap:8px;align-items:center}
+.link code{flex:1;font:inherit;font-size:14.5px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link button{margin:0;width:auto;padding:9px 16px}
+.hidden,.consent.hidden{display:none}
 .sms{background:var(--bubble);border-radius:18px;padding:10px 14px;font-size:14.5px;line-height:1.45;margin:0}
 .consent{display:flex;gap:10px;align-items:flex-start;font-weight:400;cursor:pointer}
 .consent input{width:18px;height:18px;margin-top:3px;flex:none}
@@ -45,11 +51,17 @@ footer a{color:inherit}
 
   <div class="compose">
     <div class="card">
+      <h2>Guest list link</h2>
+      <div class="link"><code id="joinUrl">doreh.com/join/demo</code><button type="button" id="copy">Copy</button></div>
+      <p class="fine">Guests add themselves with their own number. <a href="/join/demo">Open</a></p>
+    </div>
+
+    <div class="card">
       <h2>Guests <small id="count">0 selected</small></h2>
-      <label class="guest"><input type="checkbox" class="g"><span class="n">Michael Reed</span><span class="p">(310) 555-0142</span></label>
-      <label class="guest"><input type="checkbox" class="g"><span class="n">Sarah Kim</span><span class="p">(213) 555-0178</span></label>
-      <label class="guest"><input type="checkbox" class="g"><span class="n">James &amp; Olivia Turner</span><span class="p">(626) 555-0193</span></label>
-      <label class="guest"><input type="checkbox" class="g"><span class="n">Grace Miller</span><span class="p">(818) 555-0116</span></label>
+      <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">Michael Reed<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
+      <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">Sarah Kim<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
+      <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">James &amp; Olivia Turner<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
+      <label class="guest"><input type="checkbox" class="g" data-src="host"><span class="n">Grace Miller<span class="tag">Added by you</span></span><span class="p">(818) 555-0116</span></label>
       <label class="guest off"><input type="checkbox" disabled><span class="n">Daniel Hayes</span><span class="p">Opted out of texts</span></label>
     </div>
 
@@ -59,7 +71,7 @@ footer a{color:inherit}
     </div>
 
     <div class="card">
-      <label class="consent"><input type="checkbox" id="agree"><span>Each guest I selected agreed to get an invitation from me by text.</span></label>
+      <label class="consent hidden" id="agreeRow"><input type="checkbox" id="agree"><span>Each guest I added myself agreed to get an invitation from me by text.</span></label>
       <p class="fine">Doreh texts one invitation per guest on your behalf, under your name. Further texts go only to guests who sign up. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
       <button type="button" id="next" disabled>Review and send</button>
     </div>
@@ -84,8 +96,14 @@ footer a{color:inherit}
   var main=document.getElementById('main'),boxes=[].slice.call(document.querySelectorAll('.g')),
       agree=document.getElementById('agree'),next=document.getElementById('next'),count=document.getElementById('count');
   function picked(){return boxes.filter(function(b){return b.checked}).length}
+  function hostPicked(){return boxes.some(function(b){return b.checked&&b.dataset.src==='host'})}
   function plural(n){return n+' invitation'+(n===1?'':'s')}
-  function update(){var n=picked();count.textContent=n+' selected';next.disabled=!(n&&agree.checked)}
+  function update(){var n=picked(),h=hostPicked();count.textContent=n+' selected';
+    document.getElementById('agreeRow').classList.toggle('hidden',!h);
+    next.disabled=!(n&&(!h||agree.checked))}
+  document.getElementById('copy').addEventListener('click',function(){
+    var b=this;try{navigator.clipboard.writeText('https://doreh.com/join/demo')}catch(e){}
+    b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1500)});
   boxes.forEach(function(b){b.addEventListener('change',update)});
   agree.addEventListener('change',update);
   next.addEventListener('click',function(){

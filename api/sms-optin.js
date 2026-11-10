@@ -3,6 +3,8 @@
 //   the number, with the exact consent text they saw, and send one confirmation text.
 // - doreh.com/invite/demo (short code, program 'events'): the guest's number is their account; ticking the box opts them in
 //   to texts for all their Doreh events. No text is sent until the short code is live.
+// - doreh.com/join/demo (short code, program 'collector'): a guest adds themselves to the host's guest list. Giving their
+//   own number there is consent to that event's invitation text; the box adds all-events texts. Nothing is texted yet.
 // One private Blob per opt-in: sms-optin/<time>-<random>.json
 // Env: TELNYX_API_KEY, CALL_FROM (defaults to the Doreh number).
 import { put } from '@vercel/blob';
@@ -11,6 +13,8 @@ import { sameSite, looksLikeSpam, overLimit } from './_guard.js';
 
 const CONSENT = 'By checking this box, you agree to receive text messages from Doreh about this event on behalf of the host: your RSVP confirmation, reminders, day-of updates and a thank-you note. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to opt out. Consent is not required to RSVP. Privacy: doreh.com/privacy. Terms: doreh.com/terms.';
 const CONSENT_EVENTS = 'Text me invitations and updates for my Doreh events. By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. Terms: doreh.com/terms#sms Privacy: doreh.com/privacy';
+const CONSENT_INVITE = "Doreh will text you Emily's invitation to this event. Msg & data rates may apply. Reply STOP to opt out. Terms: doreh.com/terms#sms Privacy: doreh.com/privacy";
+const AGES = ['Adult', 'Senior', 'Youth', 'Child'];
 const CONFIRM = "Doreh: You're signed up for texts about Emily & David's wedding. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to opt out. Privacy: doreh.com/privacy";
 
 function json(body, status = 200) {
@@ -46,6 +50,7 @@ export async function POST(request) {
   if (looksLikeSpam(body, 2) === 'bot') return json({ ok: true });
 
   const name = String(body.name || '').replace(/\s+/g, ' ').trim().slice(0, 120);
+  if (body.program === 'collector') return collector(request, body, name);
   const attending = body.attending === 'yes' ? 'yes' : body.attending === 'no' ? 'no' : null;
   if (!name) return json({ error: 'Enter your name.' }, 400);
   if (!attending) return json({ error: 'Choose whether you can come.' }, 400);
@@ -86,4 +91,32 @@ export async function POST(request) {
     }
   }
   return json({ ok: true, texts: true });
+}
+
+// guest list link: the number is always kept (it is how the invitation reaches them), with the consent they saw
+async function collector(request, body, name) {
+  if (!name) return json({ error: 'Enter your name.' }, 400);
+  const phone = usNumber(body.phone);
+  if (!phone) return json({ error: 'Enter a US mobile number.' }, 400);
+  const optIn = body.optIn === true;
+  const party = (Array.isArray(body.party) ? body.party : []).slice(0, 2).map((p) => ({
+    name: String(p?.name || '').replace(/\s+/g, ' ').trim().slice(0, 120),
+    age: AGES.includes(p?.age) ? p.age : 'Adult',
+  })).filter((p) => p.name);
+  const prefix = process.env.VERCEL_ENV === 'production' ? 'sms-optin/' : 'sms-optin-test/';
+  const at = new Date().toISOString();
+  try {
+    if (await overLimit(request, 'sms-optin', 10)) return json({ error: 'Too many tries. Try again in an hour.' }, 429);
+    await put(prefix + at.replace(/[:.]/g, '-') + '-' + randomBytes(4).toString('hex') + '.json', JSON.stringify({
+      phone, name, party, event: 'demo', program: 'collector',
+      consent: optIn ? [CONSENT_INVITE, CONSENT_EVENTS] : [CONSENT_INVITE], optIn, at,
+      page: 'https://doreh.com/join/demo',
+      country: request.headers.get('x-vercel-ip-country') || '',
+      userAgent: (request.headers.get('user-agent') || '').slice(0, 300),
+    }), { access: 'private', contentType: 'application/json', addRandomSuffix: false, allowOverwrite: false });
+  } catch (err) {
+    console.error('sms-optin save failed', { error: err?.message });
+    return json({ error: 'That did not go through. Try again in a minute.' }, 502);
+  }
+  return json({ ok: true, texts: optIn });
 }
