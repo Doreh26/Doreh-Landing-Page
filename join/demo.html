@@ -117,7 +117,7 @@ footer a{color:inherit}
 <script>
 (function(){
   var el=document.getElementById('join'),msg=document.getElementById('msg'),party=document.getElementById('party'),openedAt=Date.now(),MAX=2;
-  var AGES=['Adult','Senior','Youth','Child'];
+  var AGES=[['Adult','Adult 16–64'],['Senior','Senior 65+'],['Youth','Youth 12–15'],['Child','Child 2–11']];
   function digits(v){var d=String(v).replace(/\D/g,'');return d.length===11&&d[0]==='1'?d.slice(1):d}
   function rows(){return [].slice.call(party.querySelectorAll('.person'))}
   function refresh(){var n=rows().length;document.getElementById('addPerson').style.display=n<MAX?'':'none';
@@ -125,7 +125,7 @@ footer a{color:inherit}
   document.getElementById('addPerson').addEventListener('click',function(){
     var r=document.createElement('div');r.className='person';
     r.innerHTML='<input type="text" class="nm" placeholder="Name" aria-label="Name"><select aria-label="Age range">'+
-      AGES.map(function(a){return '<option>'+a+'</option>'}).join('')+'</select>'+
+      AGES.map(function(a){return '<option value="'+a[0]+'">'+a[1]+'</option>'}).join('')+'</select>'+
       '<input type="tel" class="ph" placeholder="Mobile (optional)" aria-label="Mobile number" inputmode="tel">'+
       '<input type="email" class="em" placeholder="Email (optional)" aria-label="Email"><button type="button" class="share">Share link</button>'+
       '<label class="consent ok hidden"><input type="checkbox" class="agree"><span class="agreeText">They agreed to get this invitation by text.</span></label>';
