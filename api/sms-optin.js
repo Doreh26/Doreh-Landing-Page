@@ -13,7 +13,7 @@ import { sameSite, looksLikeSpam, overLimit } from './_guard.js';
 
 const CONSENT = 'By checking this box, you agree to receive text messages from Doreh about this event on behalf of the host: your RSVP confirmation, reminders, day-of updates and a thank-you note. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to opt out. Consent is not required to RSVP. Privacy: doreh.com/privacy. Terms: doreh.com/terms.';
 const CONSENT_EVENTS = 'Text me invitations and updates for my Doreh events. By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. Terms: doreh.com/terms#sms Privacy: doreh.com/privacy';
-const CONSENT_INVITE = "Doreh will text you Emily's invitation to this event. Msg & data rates may apply. Reply STOP to opt out. Terms: doreh.com/terms#sms Privacy: doreh.com/privacy";
+const CONSENT_INVITE = "Doreh Event Texts: Doreh will text you Emily's invitation to this event. Msg & data rates may apply. Reply STOP to opt out, HELP for help. Support: support@doreh.com or 1-877-883-2626. Mobile carriers are not liable for delayed or undelivered messages. Terms: doreh.com/terms#sms Privacy: doreh.com/privacy#sms";
 const AGES = ['Adult', 'Senior', 'Youth', 'Child'];
 const CONFIRM = "Doreh: You're signed up for texts about Emily & David's wedding. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to opt out. Privacy: doreh.com/privacy";
 
