@@ -34,7 +34,14 @@ input[type=text],input[type=tel]{width:100%;font:inherit;color:var(--ink);backgr
 .choice label{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-weight:400}
 .choice input{margin-right:6px}
 .hint{font-size:13px;color:var(--ink-2);margin:6px 0 0}
-.step2{display:none}.coded .step2{display:block}.coded .step1btn{display:none}
+.hint a{color:var(--gold)}
+.row{display:flex;gap:8px;align-items:stretch}
+.row input{flex:1;min-width:0}
+.row button.inline{margin:0;width:auto;padding:10px 16px;white-space:nowrap}
+.codebox{display:none}.coded .codebox{display:block}
+.step2{display:none}.verified .step2{display:block}
+.verified #verify{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.person .share{margin:0;width:auto;padding:8px 12px;font-size:13px;background:transparent;color:var(--gold);border:1px solid var(--line);white-space:nowrap}
 .consent{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-weight:400;cursor:pointer}
 .consent input{width:18px;height:18px;margin-top:3px;flex:none}
 .fine{font-size:13px;color:var(--ink-2);margin:8px 0 0 28px;line-height:1.5}
@@ -48,9 +55,9 @@ button:disabled{opacity:.6}
 footer{margin-top:36px;font-size:12.5px;color:var(--ink-2)}
 footer a{color:inherit}
 </style></head><body><div class="wrap" id="main">
-  <div class="sample">Sample invitation. See <a href="/sms">how Doreh texts work</a>.</div>
+  <div class="sample">Example invitation. See <a href="/sms">how Doreh texts work</a>.</div>
 
-  <p class="sms">Doreh: Emily Carter invited you to Emily &amp; David’s wedding, Sat Jun 13. RSVP: doreh.com/r/k8F2 Reply STOP to opt out.</p>
+  <p class="sms">Doreh: Emily Carter invited you to Emily &amp; David's wedding, Sat Jun 13. RSVP: doreh.com/r/k8F2 Sent at Emily's request. Reply STOP to opt out, HELP for help.</p>
   <p class="from">The one invitation text a guest receives, sent at the host’s request</p>
 
   <img class="hero" src="/assets/hero-wedding.jpg" alt="">
@@ -69,19 +76,21 @@ footer a{color:inherit}
     </div>
 
     <label class="f" for="phone">Mobile number</label>
-    <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(310) 555-0123">
+    <div class="row"><input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="(310) 555-0123"><button type="button" class="inline" id="sendCode">Send code</button></div>
     <p class="hint">Your number is your Doreh account. No password.</p>
-    <button type="button" class="step1btn" id="sendCode">Send my code</button>
+    <div class="codebox">
+      <label class="f" for="code">5-digit code</label>
+      <div class="row"><input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="5"><button type="button" class="inline" id="verify">Verify</button></div>
+      <p class="hint" id="codeHint">We texted a code to your number.</p>
+      <p class="hint"><a href="#" id="callCode">Call me with the code instead</a></p>
+    </div>
 
     <div class="step2">
-      <label class="f" for="code">6-digit code</label>
-      <input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
-      <p class="hint" id="codeHint">We texted a one-time code to your number.</p>
 
       <label class="consent" for="optIn"><input type="checkbox" id="optIn" name="optIn"><span>Text me invitations and updates for my Doreh events</span></label>
-      <p class="fine" id="consentText">By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy">Privacy</a></p>
+      <p class="fine" id="consentText">By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP or join a guest list. Ages 13+; under 18 with a parent’s permission. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
 
-      <p class="terms">By creating an account, you agree to Doreh’s <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+      <p class="terms">By creating an account, you agree to Doreh’s <a href="/terms">Terms of Use</a> and <a href="/privacy">Privacy Policy</a>.</p>
       <button type="submit">Create account and send RSVP</button>
     </div>
 
@@ -90,7 +99,7 @@ footer a{color:inherit}
   </form>
 
   <div class="done" role="status">
-    <h2>Thank you</h2>
+    <h2>Example complete</h2>
     <p id="doneText">Your RSVP is in.</p>
   </div>
 
@@ -105,27 +114,27 @@ footer a{color:inherit}
     if(!el.name.value.trim())return msg.textContent='Enter your name.';
     if(!el.querySelector('input[name=attending]:checked'))return msg.textContent='Choose whether you can come.';
     if(!/^[2-9]\d{2}[2-9]\d{6}$/.test(digits(el.phone.value)))return msg.textContent='Enter a US mobile number.';
-    // sample page: sign-in codes go out once Doreh's short code is live; until then the sample code is 000000
-    document.getElementById('codeHint').textContent='This is a sample, so no text is sent. Enter 000000.';
-    document.getElementById('main').classList.add('coded');
+    document.getElementById('codeHint').textContent='This is an example, so no text is sent. Enter 00000.';
+    document.getElementById('main').classList.add('coded');this.textContent='Resend';
     el.code.focus();
+  });
+  document.getElementById('callCode').addEventListener('click',function(e){
+    e.preventDefault();
+    document.getElementById('codeHint').textContent='This is an example, so no call is placed. Enter 00000.';
+    el.code.focus();
+  });
+  document.getElementById('verify').addEventListener('click',function(){
+    msg.textContent='';
+    if(el.code.value.trim()!=='00000')return msg.textContent='That code doesn’t match. On this example, use 00000.';
+    document.getElementById('main').classList.add('verified');
+    this.textContent='Verified ✓';this.disabled=true;el.code.readOnly=true;el.phone.readOnly=true;
+    document.getElementById('sendCode').disabled=true;
   });
   el.addEventListener('submit',function(e){
     e.preventDefault();msg.textContent='';
-    if(!document.getElementById('main').classList.contains('coded'))return;
-    if(el.code.value.trim()!=='000000')return msg.textContent='That code doesn’t match. On this sample, use 000000.';
-    var b=el.querySelector('button[type=submit]');b.disabled=true;
-    fetch('/api/sms-optin',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({program:'events',name:el.name.value.trim(),attending:el.querySelector('input[name=attending]:checked').value,
-        phone:el.phone.value.trim(),optIn:el.optIn.checked,website:el.website.value,elapsed:Date.now()-openedAt})})
-      .then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok)throw new Error(d.error||'');return d})})
-      .then(function(d){
-        document.getElementById('doneText').textContent=d.texts
-          ?'Your RSVP is in and your account is ready. You’ll get Doreh texts about your events. Reply STOP at any time to cancel.'
-          :'Your RSVP is in and your account is ready. You won’t get texts beyond this invitation.';
-        document.getElementById('main').classList.add('sent');
-      })
-      .catch(function(err){msg.textContent=err.message||'That did not go through. Try again in a minute.';b.disabled=false});
+    if(!document.getElementById('main').classList.contains('verified'))return msg.textContent='Verify your number first.';
+    document.getElementById('doneText').textContent='Example only. Nothing was saved and no texts were sent.';
+    document.getElementById('main').classList.add('sent');
   });
 })();
 </script>

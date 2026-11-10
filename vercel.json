@@ -38,6 +38,16 @@
       "source": "/c/:path*",
       "destination": "/sms",
       "permanent": false
+    },
+    {
+      "source": "/claim/:path*",
+      "destination": "/join/demo",
+      "permanent": false
+    },
+    {
+      "source": "/p/:path*",
+      "destination": "/join/demo",
+      "permanent": false
     }
   ]
 }

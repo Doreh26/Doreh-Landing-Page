@@ -1,7 +1,7 @@
 // Incoming texts to the Doreh number (Telnyx messaging profile webhook). The number is text-out only:
 // STOP/HELP/START are answered by Telnyx's keyword replies and skipped here; any other text gets one fixed
 // reply pointing to phone and email support, at most once per sender per day. Message bodies are not stored.
-// On the short code only, JOIN opts the sender in to Doreh event texts: we keep the number with the consent wording and
+// On the short code only, JOIN opts the sender in to Doreh texts: we keep the number with the consent wording and
 // send the keyword confirmation (the wording filed with the carriers).
 // Env: TELNYX_PUBLIC_KEY (Telnyx portal → Keys & Credentials → Public Key), TELNYX_API_KEY, SHORT_CODE (once live).
 import { put } from '@vercel/blob';
@@ -9,7 +9,7 @@ import { createHash, createPublicKey, randomBytes, verify } from 'node:crypto';
 
 const KEYWORDS = new Set(['STOP', 'STOPALL', 'UNSUBSCRIBE', 'CANCEL', 'END', 'QUIT', 'HELP', 'INFO', 'START', 'UNSTOP']);
 const REPLY = 'Doreh: This number does not accept text messages. For help, call +1 877 883 2626 or email support@doreh.com. Reply STOP to opt out.';
-const JOINED = "Doreh: You're signed up for Doreh event texts. Msg frequency varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel.";
+const JOINED = "Welcome to Doreh! You're signed up to receive event invites & updates. Msg freq varies. Msg&data rates may apply. Help: support@doreh.com. STOP to cancel.";
 const MAX_SKEW_SECONDS = 300;
 
 const ok = () => new Response(null, { status: 200 });
