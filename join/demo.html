@@ -84,7 +84,7 @@ footer a{color:inherit}
       <p class="hint"><a href="#" id="callCode">Call me with the code instead</a></p>
 
       <label class="consent" for="optIn"><input type="checkbox" id="optIn" name="optIn"><span>Text me invitations and updates for my Doreh events</span></label>
-      <p class="fine">By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to join the guest list. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy">Privacy</a></p>
+      <p class="fine">Doreh Event Texts: By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP or join a guest list. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
 
       <p class="terms">By creating an account, you agree to Doreh’s <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
       <button type="submit">Add me to the list</button>
@@ -95,7 +95,7 @@ footer a{color:inherit}
   </form>
 
   <div class="done" role="status">
-    <h2>You’re on the list</h2>
+    <h2>Sample complete</h2>
     <p id="doneText"></p>
   </div>
 
@@ -133,19 +133,8 @@ footer a{color:inherit}
     e.preventDefault();msg.textContent='';
     if(!document.getElementById('main').classList.contains('coded'))return;
     if(el.code.value.trim()!=='00000')return msg.textContent='That code doesn’t match. On this sample, use 00000.';
-    var b=el.querySelector('button[type=submit]');b.disabled=true;
-    var people=rows().map(function(r){return{name:r.querySelector('input').value.trim(),age:r.querySelector('select').value}}).filter(function(p){return p.name});
-    fetch('/api/sms-optin',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({program:'collector',name:el.name.value.trim(),party:people,
-        phone:el.phone.value.trim(),optIn:el.optIn.checked,website:el.website.value,elapsed:Date.now()-openedAt})})
-      .then(function(r){return r.json().catch(function(){return{}}).then(function(d){if(!r.ok)throw new Error(d.error||'');return d})})
-      .then(function(d){
-        document.getElementById('doneText').textContent=d.texts
-          ?'Emily’s invitation will come by text from Doreh, and you’ll get Doreh texts about your events. Reply STOP at any time to cancel.'
-          :'Emily’s invitation will come by text from Doreh. You won’t get other texts.';
-        document.getElementById('main').classList.add('sent');
-      })
-      .catch(function(err){msg.textContent=err.message||'That did not go through. Try again in a minute.';b.disabled=false});
+    document.getElementById('doneText').textContent='Sample only. Nothing was saved and no texts were sent.';
+    document.getElementById('main').classList.add('sent');
   });
 })();
 </script>

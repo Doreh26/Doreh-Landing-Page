@@ -31,6 +31,7 @@ h2 small{font-family:'Outfit',system-ui,sans-serif;font-size:13px;font-weight:40
 .link code{flex:1;font:inherit;font-size:14.5px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .link button{margin:0;width:auto;padding:9px 16px}
 .hidden,.consent.hidden{display:none}
+.attest{margin:0 0 10px 30px;font-size:14px}
 .sms{background:var(--bubble);border-radius:18px;padding:10px 14px;font-size:14.5px;line-height:1.45;margin:0}
 .consent{display:flex;gap:10px;align-items:flex-start;font-weight:400;cursor:pointer}
 .consent input{width:18px;height:18px;margin-top:3px;flex:none}
@@ -61,7 +62,8 @@ footer a{color:inherit}
       <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">Michael Reed<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
       <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">Sarah Kim<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
       <label class="guest"><input type="checkbox" class="g" data-src="self"><span class="n">James &amp; Olivia Turner<span class="tag self">Added themselves</span></span><span class="p">Number private</span></label>
-      <label class="guest"><input type="checkbox" class="g" data-src="host"><span class="n">Grace Miller<span class="tag">Added by you</span></span><span class="p">(818) 555-0116</span></label>
+      <label class="guest"><input type="checkbox" class="g" data-src="host" id="gGrace"><span class="n">Grace Miller<span class="tag">Added by you</span></span><span class="p">(818) 555-0116</span></label>
+      <label class="consent hidden attest" id="attestGrace"><input type="checkbox" class="ok" data-for="gGrace"><span>Grace agreed to get my invitation by text.</span></label>
       <label class="guest off"><input type="checkbox" disabled><span class="n">Daniel Hayes</span><span class="p">Opted out of texts</span></label>
     </div>
 
@@ -71,8 +73,7 @@ footer a{color:inherit}
     </div>
 
     <div class="card">
-      <label class="consent hidden" id="agreeRow"><input type="checkbox" id="agree"><span>Each guest I added myself agreed to get an invitation from me by text.</span></label>
-      <p class="fine">Doreh texts one invitation per guest on your behalf, under your name. Further texts go only to guests who sign up. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
+      <p class="fine">Doreh texts one invitation per guest on your behalf, under your name. Further texts go only to guests who sign up. Invitation texts use Doreh’s wording; you can’t add links or ads. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
       <button type="button" id="next" disabled>Review and send</button>
     </div>
   </div>
@@ -94,18 +95,19 @@ footer a{color:inherit}
 <script>
 (function(){
   var main=document.getElementById('main'),boxes=[].slice.call(document.querySelectorAll('.g')),
-      agree=document.getElementById('agree'),next=document.getElementById('next'),count=document.getElementById('count');
+      next=document.getElementById('next'),count=document.getElementById('count');
   function picked(){return boxes.filter(function(b){return b.checked}).length}
-  function hostPicked(){return boxes.some(function(b){return b.checked&&b.dataset.src==='host'})}
+  function attested(b){var a=document.querySelector('.ok[data-for="'+b.id+'"]');return a&&a.checked}
+  function hostOk(){return boxes.every(function(b){return !(b.checked&&b.dataset.src==='host')||attested(b)})}
   function plural(n){return n+' invitation'+(n===1?'':'s')}
-  function update(){var n=picked(),h=hostPicked();count.textContent=n+' selected';
-    document.getElementById('agreeRow').classList.toggle('hidden',!h);
-    next.disabled=!(n&&(!h||agree.checked))}
+  function update(){var n=picked();count.textContent=n+' selected';
+    boxes.forEach(function(b){var a=document.getElementById('attest'+b.id.slice(1));if(a)a.classList.toggle('hidden',!b.checked)});
+    next.disabled=!(n&&hostOk())}
+  [].slice.call(document.querySelectorAll('.ok')).forEach(function(a){a.addEventListener('change',update)});
   document.getElementById('copy').addEventListener('click',function(){
     var b=this;try{navigator.clipboard.writeText('https://doreh.com/join/demo')}catch(e){}
     b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1500)});
   boxes.forEach(function(b){b.addEventListener('change',update)});
-  agree.addEventListener('change',update);
   next.addEventListener('click',function(){
     document.getElementById('confirmText').textContent='Doreh will text '+plural(picked())+' on your behalf, signed "Sent at Emily\'s request." Each guest gets one text and can reply STOP.';
     main.classList.add('asking');
