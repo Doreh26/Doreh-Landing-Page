@@ -34,6 +34,7 @@ input[type=text],input[type=tel]{width:100%;font:inherit;color:var(--ink);backgr
 .choice label{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-weight:400}
 .choice input{margin-right:6px}
 .hint{font-size:13px;color:var(--ink-2);margin:6px 0 0}
+.hint a{color:var(--gold)}
 .step2{display:none}.coded .step2{display:block}.coded .step1btn{display:none}
 .consent{display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-weight:400;cursor:pointer}
 .consent input{width:18px;height:18px;margin-top:3px;flex:none}
@@ -50,7 +51,7 @@ footer a{color:inherit}
 </style></head><body><div class="wrap" id="main">
   <div class="sample">Sample invitation. See <a href="/sms">how Doreh texts work</a>.</div>
 
-  <p class="sms">Doreh: Emily Carter invited you to Emily &amp; David’s wedding, Sat Jun 13. RSVP: doreh.com/r/k8F2 Reply STOP to opt out.</p>
+  <p class="sms">Doreh: Emily Carter invited you to Emily &amp; David's wedding, Sat Jun 13. RSVP: doreh.com/r/k8F2 Sent at Emily's request. Reply STOP to opt out, HELP for help.</p>
   <p class="from">The one invitation text a guest receives, sent at the host’s request</p>
 
   <img class="hero" src="/assets/hero-wedding.jpg" alt="">
@@ -74,9 +75,10 @@ footer a{color:inherit}
     <button type="button" class="step1btn" id="sendCode">Send my code</button>
 
     <div class="step2">
-      <label class="f" for="code">6-digit code</label>
-      <input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+      <label class="f" for="code">5-digit code</label>
+      <input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="5">
       <p class="hint" id="codeHint">We texted a one-time code to your number.</p>
+      <p class="hint"><a href="#" id="callCode">Call me with the code instead</a></p>
 
       <label class="consent" for="optIn"><input type="checkbox" id="optIn" name="optIn"><span>Text me invitations and updates for my Doreh events</span></label>
       <p class="fine" id="consentText">By checking this box, you agree to receive recurring texts from Doreh at the number provided: event invitations, RSVP confirmations, reminders and updates. Consent is not required to RSVP. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to cancel. Carriers are not liable for delayed or undelivered messages. <a href="/terms#sms">Terms</a> · <a href="/privacy">Privacy</a></p>
@@ -105,15 +107,20 @@ footer a{color:inherit}
     if(!el.name.value.trim())return msg.textContent='Enter your name.';
     if(!el.querySelector('input[name=attending]:checked'))return msg.textContent='Choose whether you can come.';
     if(!/^[2-9]\d{2}[2-9]\d{6}$/.test(digits(el.phone.value)))return msg.textContent='Enter a US mobile number.';
-    // sample page: sign-in codes go out once Doreh's short code is live; until then the sample code is 000000
-    document.getElementById('codeHint').textContent='This is a sample, so no text is sent. Enter 000000.';
+    // sample page: sign-in codes go out once Doreh's short code is live; until then the sample code is 00000
+    document.getElementById('codeHint').textContent='This is a sample, so no text is sent. Enter 00000.';
     document.getElementById('main').classList.add('coded');
+    el.code.focus();
+  });
+  document.getElementById('callCode').addEventListener('click',function(e){
+    e.preventDefault();
+    document.getElementById('codeHint').textContent='This is a sample, so no call is placed. Enter 00000.';
     el.code.focus();
   });
   el.addEventListener('submit',function(e){
     e.preventDefault();msg.textContent='';
     if(!document.getElementById('main').classList.contains('coded'))return;
-    if(el.code.value.trim()!=='000000')return msg.textContent='That code doesn’t match. On this sample, use 000000.';
+    if(el.code.value.trim()!=='00000')return msg.textContent='That code doesn’t match. On this sample, use 00000.';
     var b=el.querySelector('button[type=submit]');b.disabled=true;
     fetch('/api/sms-optin',{method:'POST',headers:{'content-type':'application/json'},
       body:JSON.stringify({program:'events',name:el.name.value.trim(),attending:el.querySelector('input[name=attending]:checked').value,

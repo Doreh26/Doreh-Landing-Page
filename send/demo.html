@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Send Invitations · Doreh</title>
+<link rel="canonical" href="https://doreh.com/send/demo">
+<meta name="robots" content="noindex">
+<meta name="description" content="A sample of the screen a Doreh host uses to text invitations: each guest selected one at a time, consent confirmed, sent on the host's behalf.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#FBF8F3;--ink:#1C1813;--ink-2:#4A4036;--line:#E4DACA;--gold:#9A6F12;--card:#FFFFFF;--err:#A3361F;--bubble:#E9E9EB}
+@media (prefers-color-scheme:dark){:root{--bg:#1B140D;--ink:#FBF5E9;--ink-2:#CFC4B3;--line:#3A2E22;--gold:#E5C158;--card:#241B12;--err:#F08A72;--bubble:#2E2E30}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:300 16px/1.6 'Outfit',system-ui,sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:28px 16px 64px}
+.sample{font-size:12.5px;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;display:inline-block;margin-bottom:18px}
+.sample a{color:var(--gold)}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:40px;line-height:1.1;margin:8px 0 4px}
+.when{color:var(--ink-2);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:24px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline}
+h2 small{font-family:'Outfit',system-ui,sans-serif;font-size:13px;font-weight:400;color:var(--ink-2)}
+.guest{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);cursor:pointer;font-weight:400}
+.guest:first-of-type{border-top:0}
+.guest input{width:18px;height:18px;flex:none}
+.guest .n{flex:1}
+.guest .p{font-size:13.5px;color:var(--ink-2);white-space:nowrap}
+.guest.off{cursor:default;opacity:.55}
+.sms{background:var(--bubble);border-radius:18px;padding:10px 14px;font-size:14.5px;line-height:1.45;margin:0}
+.consent{display:flex;gap:10px;align-items:flex-start;font-weight:400;cursor:pointer}
+.consent input{width:18px;height:18px;margin-top:3px;flex:none}
+.fine{font-size:13px;color:var(--ink-2);margin:10px 0 0;line-height:1.5}
+.fine a{color:var(--gold)}
+button{margin-top:16px;width:100%;font:inherit;font-weight:500;background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:12px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.confirm,.done{display:none}
+.asking .confirm{display:block}.asking .compose{display:none}
+.sent .done{display:block}.sent .compose,.sent .confirm{display:none}
+footer{margin-top:36px;font-size:12.5px;color:var(--ink-2)}
+footer a{color:inherit}
+</style></head><body><div class="wrap" id="main">
+  <div class="sample">Sample host screen. No texts are sent. See <a href="/sms">how Doreh texts work</a>.</div>
+  <h1>Send invitations</h1>
+  <p class="when">Emily &amp; David's wedding · Sat Jun 13</p>
+
+  <div class="compose">
+    <div class="card">
+      <h2>Guests <small id="count">0 selected</small></h2>
+      <label class="guest"><input type="checkbox" class="g"><span class="n">Michael Reed</span><span class="p">(310) 555-0142</span></label>
+      <label class="guest"><input type="checkbox" class="g"><span class="n">Sarah Kim</span><span class="p">(213) 555-0178</span></label>
+      <label class="guest"><input type="checkbox" class="g"><span class="n">James &amp; Olivia Turner</span><span class="p">(626) 555-0193</span></label>
+      <label class="guest"><input type="checkbox" class="g"><span class="n">Grace Miller</span><span class="p">(818) 555-0116</span></label>
+      <label class="guest off"><input type="checkbox" disabled><span class="n">Daniel Hayes</span><span class="p">Opted out of texts</span></label>
+    </div>
+
+    <div class="card">
+      <h2>Invitation text</h2>
+      <p class="sms">Doreh: Emily Carter invited you to Emily &amp; David's wedding, Sat Jun 13. RSVP: doreh.com/r/k8F2 Sent at Emily's request. Reply STOP to opt out, HELP for help.</p>
+    </div>
+
+    <div class="card">
+      <label class="consent"><input type="checkbox" id="agree"><span>Each guest I selected agreed to get an invitation from me by text.</span></label>
+      <p class="fine">Doreh texts one invitation per guest on your behalf, under your name. Further texts go only to guests who sign up. <a href="/terms#sms">Terms</a> · <a href="/privacy#sms">Privacy</a></p>
+      <button type="button" id="next" disabled>Review and send</button>
+    </div>
+  </div>
+
+  <div class="card confirm">
+    <h2>Send from you?</h2>
+    <p id="confirmText"></p>
+    <button type="button" id="send">Yes, send on my behalf</button>
+    <button type="button" class="ghost" id="back">Back</button>
+  </div>
+
+  <div class="card done">
+    <h2>Sent</h2>
+    <p id="doneText"></p>
+  </div>
+
+  <footer>Doreh, Inc. · <a href="mailto:support@doreh.com">support@doreh.com</a> · <a href="/sms">Text Messages</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></footer>
+</div>
+<script>
+(function(){
+  var main=document.getElementById('main'),boxes=[].slice.call(document.querySelectorAll('.g')),
+      agree=document.getElementById('agree'),next=document.getElementById('next'),count=document.getElementById('count');
+  function picked(){return boxes.filter(function(b){return b.checked}).length}
+  function plural(n){return n+' invitation'+(n===1?'':'s')}
+  function update(){var n=picked();count.textContent=n+' selected';next.disabled=!(n&&agree.checked)}
+  boxes.forEach(function(b){b.addEventListener('change',update)});
+  agree.addEventListener('change',update);
+  next.addEventListener('click',function(){
+    document.getElementById('confirmText').textContent='Doreh will text '+plural(picked())+' on your behalf, signed "Sent at Emily\'s request." Each guest gets one text and can reply STOP.';
+    main.classList.add('asking');
+  });
+  document.getElementById('back').addEventListener('click',function(){main.classList.remove('asking')});
+  document.getElementById('send').addEventListener('click',function(){
+    document.getElementById('doneText').textContent='This is a sample, so no texts were sent. In Doreh, '+plural(picked())+' would go out now.';
+    main.classList.remove('asking');main.classList.add('sent');
+  });
+})();
+</script>
+</body></html>
